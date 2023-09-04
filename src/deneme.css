@@ -1,0 +1,13 @@
+.contacts-container {
+    position: relative;
+    z-index: 1; /* Ensure the container is above other content */
+  }
+  
+  .popup-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Ensure the popup is above the rest of the content */
+    /* Add other styling properties as needed */
+  }
