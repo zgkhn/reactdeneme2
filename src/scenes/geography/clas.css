@@ -1,0 +1,9 @@
+.ibox .label {
+    font-size: 10px;
+  }
+  .ui-sortable .ibox-title {
+    cursor: move;
+  }
+  .ibox.ui-sortable-placeholder {
+    margin: 0 0 23px !important;
+  }

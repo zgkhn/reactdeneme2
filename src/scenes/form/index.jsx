@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Table from './table';
+import Tablee from './table';
 import { useCollection } from '../../hooks/useallCollection'
 
 const Form = () => {
@@ -9,40 +9,50 @@ const Form = () => {
 console.log(documents)
   const columns = [
     {
-      Header: 'Başlık 1',
+      Header: 'Adı Soyadı',
       accessor: 'ad', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
     },
     {
-      Header: 'Başlık 2',
+      Header: 'Kullanıcı Adı',
       accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
     },
     {
-      Header: 'Başlık 1',
+      Header: 'Ehliyet Yenileme Tarihi',
       accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
     },
     {
-      Header: 'Başlık 2',
+      Header: 'Belge Türü',
       accessor: 'ehliyet', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
     },{
-      Header: 'Başlık 1',
+      Header: 'Email',
       accessor: 'email', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
     },
     {
-      Header: 'Başlık 2',
+      Header: 'Telefon',
       accessor: 'tel412', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
     },
   ];
-  
+
 
   return (
     <div>
       <h1>Form</h1>
-      <div>
       
        
-      </div>
-      <h1>Table</h1>
-      <Table data={documents} columns={columns} />
+  
+      <Tablee data={documents} columns={columns} />
     </div>
   );
 };
