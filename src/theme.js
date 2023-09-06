@@ -132,6 +132,12 @@ export const themeSettings = (mode) => {
             primary: {
               main: colors.primary[500],
             },
+            tablohd: {
+              fontWeight: 'bold',
+              backgroundColor: '#DBC9C5',
+              color: '#3c9f87',
+              fontSize: '30px'
+            },
             secondary: {
               main: colors.greenAccent[500],
             },
@@ -148,6 +154,12 @@ export const themeSettings = (mode) => {
             // palette values for light mode
             primary: {
               main: colors.primary[100],
+            },
+            tablohd: {
+              fontWeight: 'bold',
+              backgroundColor: '#254357',
+              color: '#3c9f87',
+              fontSize: '30px'
             },
             secondary: {
               main: colors.greenAccent[500],

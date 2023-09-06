@@ -8,16 +8,19 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-
-
-
+import { useTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 
 
 function Tablee({ data, columns }) {
   const [searchText, setSearchText] = useState('');
 
+  const theme = useTheme();
 
+  
   const filteredData = React.useMemo(() => {
     return data.filter((row) => {
       return columns.some((column) => {
@@ -92,51 +95,78 @@ function Tablee({ data, columns }) {
   
     doc.save('tablo-verileri.pdf');
   };
-console.log(page)
-
   return (
+    
     <div>
+   <div align="center">
+  <TableContainer 
+  
+  style={ theme.palette.mode === "dark" ? (
+    {  backgroundColor: '#1F2A40', borderTopLeftRadius: '10px', borderTopRightRadius: '10px'}          ) : (
+      {  backgroundColor: '#F2F0F0', borderTopLeftRadius: '10px', borderTopRightRadius: '10px'} 
+              ) }
+  
+  
+  
+  
+  >
+    <Table border="0" width="90%" cellspacing="0" cellpadding="0">
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            <TextField
+              type="text"
+              size="small"
+            
+
+              style={theme.palette.mode === "dark" ? (
+                {  backgroundColor: '#1F2A40', textAlign: 'left'}          ) : (
+                  {  backgroundColor: '#F2F0F0', textAlign: 'left'} 
+                          )}
+
+              
+              placeholder="Ara..."
+              value={searchText}
+              onChange={(e) => {
+                setSearchText(e.target.value);
+              }}
+              InputProps={{
+                endAdornment: (
+                  <SearchIcon />
+                ),
+              }}
+            />
+          </TableCell>
+
+          <TableCell style={{ textAlign: 'right' }}> {/* Düğmeleri sağa yaslar */}
+            <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={exportToExcel} startIcon={<PostAddIcon />}></Button>
+            <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={exportToPDF} startIcon={<PictureAsPdfIcon />}></Button>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </TableContainer>
+</div>
+
     <div align="center">
       <TableContainer>
-        <Table border="0" width="90%" cellspacing="0" cellpadding="0">
-          <TableBody>
-            <TableRow>
-              <TableCell>
-                <TextField
-                  type="text"
-                  size="small"
-                  placeholder="Ara..."
-                  value={searchText}
-                  onChange={(e) => {
-                    setSearchText(e.target.value);
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <SearchIcon />
-                    ),
-                  }}
-                />
-              </TableCell>
-             
-              <TableCell>
-                <Button  variant="contained" size="small" onClick={exportToExcel} startIcon={<PostAddIcon />}>asd</Button>
-                <Button  variant="contained" size="small" onClick={exportToPDF} startIcon={<PictureAsPdfIcon />}>asdas</Button>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </div>
-    <div align="center">
-      <TableContainer>
-        <Table id="table" {...getTableProps()} border="0" width="90%" cellspacing="0" cellpadding="0">
-          <TableHead>
+        <Table id="table" {...getTableProps()} color="#3c9f87" border="0" width="90%" cellspacing="0" cellpadding="0">
+          <TableHead  style={ theme.palette.mode === "dark" ? (
+{  fontWeight: 'bold',
+backgroundColor: '#254357',
+color: '#3c9f87',
+fontSize: '30px'}          ) : (
+  {  fontWeight: 'bold',
+  backgroundColor: '#DBC9C5',
+  color: '#3c9f87',
+  fontSize: '30px'} 
+          ) }> 
             {headerGroups.map((headerGroup) => (
               <TableRow {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
                   <TableCell {...column.getHeaderProps(column.getSortByToggleProps())}>
                     {column.render('Header')}
-                    {column.isSorted ? (column.isSortedDesc ? ' &#128317;' : ' &#128316;') : ''}
+                    {column.isSorted ? (column.isSortedDesc ? <KeyboardArrowUpIcon fontSize="small"/> : <KeyboardArrowDownIcon fontSize="small"/>) : ''}
                   </TableCell>
                 ))}
               </TableRow>
@@ -157,23 +187,26 @@ console.log(page)
         </Table>
       </TableContainer>
     </div>
-    <div align="center">
-      <Button  variant="contained" size="small" onClick={() => previousPage()} disabled={!canPreviousPage}>
+    <div style={{   textAlign: 'center',
+    marginTop: 5,
+    marginBottom: 10,}} >
+      <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={() => previousPage()} disabled={!canPreviousPage}>
         Önceki
-      </Button>
-      <Button  variant="contained" size="small" onClick={() => nextPage()} disabled={!canNextPage}>
-        Sonraki
-      </Button>
+      </Button> 
       <span>
-                  Sayfa{' '}
+                   Sayfa {' '}
                   <strong>
                     {pageIndex + 1} / {Math.ceil(filteredData.length / pageSize)}
                   </strong>
                 </span>
-                <Button  variant="contained" size="small" onClick={() => setPageSize(5)}>5</Button>
-                <Button  variant="contained" size="small" onClick={() => setPageSize(10)}>10</Button>
-                <Button  variant="contained" size="small" onClick={() => setPageSize(25)}>25</Button>
-                <Button  variant="contained" size="small" onClick={() => setPageSize(50)}>50</Button>
+      <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={() => nextPage()} disabled={!canNextPage}>
+        Sonraki
+      </Button>
+     
+              
+                <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={() => setPageSize(25)}>10</Button>
+                <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={() => setPageSize(50)}>25</Button>
+                <Button style={{ margin: '0 5px' }} variant="contained" size="small" onClick={() => setPageSize(100)}>50</Button>
     </div>
   </div>
   );
