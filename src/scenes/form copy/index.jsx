@@ -12,22 +12,15 @@ const Form = () => {
 console.log(documents)
   const columns = [
     {
-      Header: '',
-      accessor: 'avatar', // Gerçek veriye göre bu kısmı güncelleyin
-      avatar:true,
-
-     },{
       Header: 'Adı Soyadı',
       accessor: 'ad', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-     ara:true
+      siralama:true
     },
     {
       Header: 'Kullanıcı Adı',
       accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
-      siralama:false ,
-      ara:true
-
+      siralama:false
 
     },
     {

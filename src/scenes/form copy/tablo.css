@@ -1,0 +1,9 @@
+.centered-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Sayfanın tamamına yayılacak şekilde ayarlayabilirsiniz */
+    background-color: #3498db; /* Arka plan rengi */
+    color: #fff; /* Yazı rengi */
+    font-size: 24px; /* Yazı boyutu */
+  }

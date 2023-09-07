@@ -53,6 +53,7 @@
     "react-fullcalendar": "^1.0.0",
     "react-icons": "^4.10.1",
     "react-native": "0.71.7",
+    "react-popup": "^0.11.0",
     "react-pro-sidebar": "0.7.1",
     "react-redux": "8.0.5",
     "react-refresh": "^0.14.0",

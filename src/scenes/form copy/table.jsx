@@ -13,37 +13,23 @@ import { ThemeProvider } from '@mui/material/styles';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { tokens } from "../../theme";
-import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import PopupForm  from './PersonelPopup'; // Popup bileşenini içeri aktarın
 
 
 
 function Tablee({ data, columns }) {
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const personelAdd = () => {
-    console.log("s")
-    setOpenDialog(true);
-  };
-
-
   const [searchText, setSearchText] = useState('');
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   
   const filteredData = React.useMemo(() => {
-  return data.filter((row) => {
-    return columns.some((column) => {
-      const cellValue = String(row[column.accessor]).toLowerCase();
-      return column.ara && cellValue.includes(searchText.toLowerCase());
+    return data.filter((row) => {
+      return columns.some((column) => {
+        const cellValue = String(row[column.accessor]).toLowerCase();
+        return cellValue.includes(searchText.toLowerCase());
+      });
     });
   }, [data, searchText, columns]);
-}, [data, searchText, columns]);
-
-  
   const {
   headerGroups,
   getTableProps,
@@ -111,10 +97,8 @@ function Tablee({ data, columns }) {
     doc.save('tablo-verileri.pdf');
   };
   return (
-
+    
     <div>
-      {openDialog && <PopupForm />}
-
    <div align="center">
   <TableContainer 
   
@@ -125,7 +109,7 @@ function Tablee({ data, columns }) {
   
 
   >
-    <Table border="0" width="90%" cellSpacing="0" cellPadding="0">
+    <Table border="0" width="90%" cellspacing="0" cellpadding="0">
       <TableBody>
         <TableRow>
           <TableCell>
@@ -154,8 +138,6 @@ function Tablee({ data, columns }) {
           </TableCell>
 
           <TableCell style={{ textAlign: 'right' }}> {/* Düğmeleri sağa yaslar */}
-          <Button style={{ margin: '0 5px' , backgroundColor:colors.primary[450] }} variant="contained" size="small" onClick={personelAdd} startIcon={<PersonAddAlt1Icon  />}></Button>
-
             <Button style={{ margin: '0 5px' , backgroundColor:colors.primary[450] }} variant="contained" size="small" onClick={exportToExcel} startIcon={<PostAddIcon />}></Button>
             <Button style={{ margin: '0 5px' , backgroundColor:colors.primary[450] }} variant="contained" size="small" onClick={exportToPDF} startIcon={<PictureAsPdfIcon />}></Button>
           </TableCell>
@@ -167,7 +149,7 @@ function Tablee({ data, columns }) {
 
     <div align="center">
       <TableContainer>
-        <Table id="table" {...getTableProps()}  border="0" width="90%" cellSpacing="0" cellPadding="0">
+        <Table id="table" {...getTableProps()}  border="0" width="90%" cellspacing="0" cellpadding="0">
           <TableHead  style={ 
 {  fontWeight: 'bold',
 backgroundColor:colors.primary[450],
@@ -203,27 +185,17 @@ fontSize: '30px'}    }>
             ))}
           </TableHead>
           <TableBody {...getTableBodyProps()}>
-  {page.map((row) => {
-    prepareRow(row);
-    return (
-      <TableRow {...row.getRowProps()}>
-        {row.cells.map((cell) => {
-          if (cell.column.avatar) {
-            return (
-              <TableCell {...cell.getCellProps()}>
-                <Avatar src={cell.value} sx={{ width: 27, height: 27 }} />
-                
-              </TableCell>
-            );
-          } else {
-            return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>;
-          }
-        })}
-      </TableRow>
-    );
-  })}
-</TableBody>
-
+            {page.map((row) => {
+              prepareRow(row);
+              return (
+                <TableRow {...row.getRowProps()}>
+                  {row.cells.map((cell) => {
+                    return <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>;
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
         </Table>
       </TableContainer>
     </div>
