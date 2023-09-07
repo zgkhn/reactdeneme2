@@ -16,7 +16,7 @@ import { tokens } from "../../theme";
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
-import PopupForm  from './PersonelPopup'; // Popup bileşenini içeri aktarın
+import PersonelPopup from './PersonelPopup';
 
 
 
@@ -24,10 +24,8 @@ function Tablee({ data, columns }) {
   const [openDialog, setOpenDialog] = useState(false);
 
   const personelAdd = () => {
-    console.log("s")
     setOpenDialog(true);
   };
-
 
   const [searchText, setSearchText] = useState('');
 
@@ -113,7 +111,7 @@ function Tablee({ data, columns }) {
   return (
 
     <div>
-      {openDialog && <PopupForm />}
+      <PersonelPopup open={openDialog} onClose={() => setOpenDialog(false)} />
 
    <div align="center">
   <TableContainer 
