@@ -29,6 +29,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuthContext } from '../../contexts/AuthContext';
 import { useLogout } from '../../hooks/useLogout'
+import { signOut } from 'firebase/auth';
 
 const Topbar = () => {
 
@@ -200,49 +201,7 @@ const Topbar = () => {
         <MenuItem onClick={closeNotificationsMenu}>Bildirim 2</MenuItem>
       </Menu>
 
-      {/* Profile Edit Dialog */}
-      <Dialog open={openProfileDialog} onClose={handleCloseProfileDialog}>
-        <DialogTitle>Profil Düzenle</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Profil bilgilerinizi düzenleyebilirsiniz.
-          </DialogContentText>
-          <TextField
-            margin="dense"
-            label="Ad"
-            fullWidth
-            value={newUserData.ad}
-            onChange={(e) => handleUserDataChange("ad", e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Firma"
-            fullWidth
-            value={newUserData.firma}
-            onChange={(e) => handleUserDataChange("firma", e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Adres"
-            fullWidth
-            value={newUserData.adres}
-            onChange={(e) => handleUserDataChange("adres", e.target.value)}
-            inputProps={{ maxLength: 100 }}
-          />
-          <TextField
-            margin="dense"
-            label="Telefon"
-            fullWidth
-            value={newUserData.tel}
-            onChange={(e) => handleUserDataChange("tel", e.target.value)}
-            inputProps={{ maxLength: 10 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" color="error" onClick={handleCloseProfileDialog}>İptal</Button>
-          <Button variant="contained" color="success" onClick={handleSaveProfile}>Kaydet</Button>
-        </DialogActions>
-      </Dialog>
+
 
       {/* Snackbar */}
       <Snackbar

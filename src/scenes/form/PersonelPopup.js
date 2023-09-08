@@ -1,14 +1,32 @@
 // PersonelPopup.js
 
 import React, { useState } from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme } from '@mui/material';
+
+import moment from "moment";
+import 'moment/locale/tr'
+import { auth, db } from "../../firebase/config"; // Firebase yapılandırması
+import {doc,updateDoc} from 'firebase/firestore'
+import { useCollection } from '../../hooks/useallCollection'
+
+import { tokens } from "../../theme";
 
 function PersonelPopup({ open, onClose }) {
+
+  const theme = useTheme();
+  const colors = tokens(theme.palette.mode);
+  const { isPending, error, documents } = useCollection('suruculer');
+
+
+
+
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [licenseRenewalDate, setLicenseRenewalDate] = useState('');
+  const currentDate = new Date();
+
   const [licenseType, setLicenseType] = useState('');
   const [phone, setPhone] = useState('');
   const [profilePhoto, setProfilePhoto] = useState(null); // Profil fotoğrafını dosya olarak saklamak için
@@ -17,6 +35,7 @@ function PersonelPopup({ open, onClose }) {
   const [telError, setTelError] = useState(false);
   const [ehliyetError, setEhliyetError] = useState(false);
   const [tarihError, setTarihError] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   const handleClose = () => {
     // Popup'ı kapatmak için onClose callback'ini çağır
@@ -26,12 +45,33 @@ function PersonelPopup({ open, onClose }) {
   const handleUserDataChange = (field, value) => {
     if (field === 'ad') {
       // Ad alanının doğrulamasını yapın
-      const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]*$/.test(value);
+      const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{1,30}$/.test(value);
+
       setAdError(!isValidAd);
     } else if (field === 'tel') {
       // Telefon numarasının doğrulamasını yapın (örnek olarak 10 haneli bir numara kabul ediliyor)
       const isValidTel = /^\d{10}$/.test(value);
       setTelError(!isValidTel);
+
+    } else if (field === 'email') {
+      // E-posta adresi doğrulamasını yapın
+      const isValidEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value);
+    
+      if (!isValidEmail) {
+        setEmailError(true);
+      } else {
+        // E-posta adresi doğru ise, suruculer tablosundaki verileri kontrol et
+        const isEmailInSuruculer = documents.some((id) => id === value);
+    
+        if (isEmailInSuruculer) {
+          // E-posta adresi suruculer tablosunda bulunuyor
+          setEmailError(true);
+        } else {
+          // E-posta adresi suruculer tablosunda bulunmuyor
+          setEmailError(false);
+        }
+      }
+
     } else if (field === 'ehliyet') {
       // Ehliyet türünün boş olup olmadığını kontrol edin
       const isValidEhliyet = value.trim() !== '';
@@ -58,6 +98,9 @@ function PersonelPopup({ open, onClose }) {
       case 'tarih':
         setLicenseRenewalDate(value);
         break;
+        case 'email':
+          setEmail(value);
+          break;
       default:
         break;
     }
@@ -79,16 +122,16 @@ function PersonelPopup({ open, onClose }) {
       });
     }
 
-    // Kullanıcı kaydı başarıyla tamamlandıktan sonra popup'ı kapatın
     handleClose();
   };
-
+  const oneDayAgo = new Date(currentDate);
+  oneDayAgo.setDate(currentDate.getDate() - 1);
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Yeni Kullanıcı Ekle</DialogTitle>
+      <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Yeni bir kullanıcı eklemek için aşağıdaki bilgileri doldurun.
+          Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.
         </DialogContentText>
         <TextField
           autoFocus
@@ -96,14 +139,15 @@ function PersonelPopup({ open, onClose }) {
           label="E-posta"
           type="email"
           fullWidth
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => handleUserDataChange('email', e.target.value)}
+
+                    error={emailError}
+          helperText={emailError ? 'Geçersiz e-posta adresi.' : ''}
         />
         <TextField
           margin="dense"
           label="Adı Soyadı"
           fullWidth
-          value={name}
           onChange={(e) => handleUserDataChange('ad', e.target.value)}
           error={adError}
           helperText={adError ? 'Geçersiz ad' : ''}
@@ -113,7 +157,6 @@ function PersonelPopup({ open, onClose }) {
           label="Şifre"
           type="password"
           fullWidth
-          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
         <TextField
@@ -121,7 +164,6 @@ function PersonelPopup({ open, onClose }) {
           label="Şifre Doğrulama"
           type="password"
           fullWidth
-          value={passwordConfirm}
           onChange={(e) => setPasswordConfirm(e.target.value)}
         />
         <TextField
@@ -129,7 +171,8 @@ function PersonelPopup({ open, onClose }) {
           label="Ehliyet Yenileme Tarihi"
           type="date"
           fullWidth
-          value={licenseRenewalDate}
+          defaultValue={moment(oneDayAgo).format("YYYY-MM-DD")}
+
           onChange={(e) => handleUserDataChange('tarih', e.target.value)}
           error={tarihError}
           helperText={tarihError ? 'Geçersiz tarih' : ''}
@@ -138,7 +181,6 @@ function PersonelPopup({ open, onClose }) {
           margin="dense"
           label="Ehliyet Türü"
           fullWidth
-          value={licenseType}
           onChange={(e) => handleUserDataChange('ehliyet', e.target.value)}
           error={ehliyetError}
           helperText={ehliyetError ? 'Ehliyet türü boş olamaz' : ''}
@@ -147,7 +189,6 @@ function PersonelPopup({ open, onClose }) {
           margin="dense"
           label="Telefon"
           fullWidth
-          value={phone}
           onChange={(e) => handleUserDataChange('tel', e.target.value)}
           error={telError}
           helperText={telError ? 'Geçersiz telefon numarası' : ''}
@@ -163,13 +204,12 @@ function PersonelPopup({ open, onClose }) {
           fullWidth
           multiline
           rows={4}
-          value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>İptal</Button>
-        <Button onClick={handleSave} color="primary">
+        <Button style={{ margin: '0 5px', backgroundColor:colors.primary[450]  }} onClick={handleClose}>İptal</Button>
+        <Button style={{ margin: '0 5px', backgroundColor:colors.primary[450]  }} onClick={handleSave} color="primary">
           Kaydet
         </Button>
       </DialogActions>

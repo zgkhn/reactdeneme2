@@ -35,7 +35,6 @@ import { useDocument } from '../../hooks/useCollection'
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const {user} =useAuthContext();
   return (
     <MenuItem
       active={selected === title}
@@ -52,7 +51,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 const Sidebar = () => {
   const {user} =useAuthContext();
-  const { document, error } = useDocument("suruculer", user.uid);
+  //const { document, error } = useDocument("suruculer", user.uid);
 
 
     const theme = useTheme();
@@ -130,8 +129,6 @@ const Sidebar = () => {
                     sx={{ m: "10px 0 0 0" }}
                   >
 
-        {error ? (<p>....</p>) : document ? (<p>{document.ad}</p>) : (<p>...</p>)}
-
 
 
 
@@ -140,7 +137,7 @@ const Sidebar = () => {
 
            </Typography>
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                  {error ? (<p>....</p>) : user ? (<p>{user.email}</p>) : (<p>...</p>)}
+                  {/* {error ? (<p>....</p>) : user ? (<p>{user.email}</p>) : (<p>...</p>)} */}
 
           </Typography>
                 </Box>

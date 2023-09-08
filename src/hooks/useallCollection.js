@@ -26,13 +26,10 @@ export const useCollection = (collectionName, _q, _ob) => {
       const dizi = [];
       snap.docs.forEach(doc => {
         const data = doc.data();
-        const formattedDate = moment(data["e-yenileme-t"].toDate()).format('YYYY-MM-DD'); // Tarihi düzenle
 
         dizi.push({
           ...data,
           id: doc.id,
-          email: data.email,
-          tarih: formattedDate // Düzenlenmiş tarihi diziye ekle
 
 
         });

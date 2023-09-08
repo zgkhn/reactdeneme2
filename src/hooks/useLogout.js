@@ -18,11 +18,7 @@ export const useLogout=()=>{
 
         try {
 
-            const {uid}=user;
-            await updateDoc(doc(db,'suruculer',uid),{
-                online:false
-            })
-        
+           
 
             await signOut(auth)
 
