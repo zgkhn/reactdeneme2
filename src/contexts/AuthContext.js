@@ -1,21 +1,30 @@
 import { createContext, useEffect, useReducer } from "react";
 import { auth } from '../firebase/config';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-
 export const AuthContext = createContext();
 
 export const authReducer = (state, action) => {
+
   switch (action.type) {
     case 'LOGIN':
       return { ...state, user: action.payload };
     case 'LOGOUT':
       return { ...state, user: null, authIsReady: false };
     case 'AUTH_IS_READY':
-      return { ...state, user: action.payload, authIsReady: true };
+      return { ...state, 
+        user: action.payload,
+        authIsReady: true ,
+        
+        };
+
+
     default:
       return state;
   }
 };
+
+
+
 
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
@@ -25,6 +34,8 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     let timeoutId;
+    
+;
 
     const startLogoutTimer = () => {
       timeoutId = setTimeout(() => {

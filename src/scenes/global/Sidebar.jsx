@@ -1,6 +1,8 @@
 import React, { useState, useEffect ,useContext  } from "react";
 import { AuthContext } from '../../contexts/AuthContext';
 import { getFirmaById } from "../../firebase/veri";
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
 
 
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
@@ -35,6 +37,7 @@ import { useDocument } from '../../hooks/useCollection'
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   return (
     <MenuItem
       active={selected === title}
@@ -51,7 +54,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 };
 const Sidebar = () => {
   const {user} =useAuthContext();
-  //const { document, error } = useDocument("suruculer", user.uid);
+  const { document, error } = useDocument("user", user.uid);
 
 
     const theme = useTheme();
@@ -127,18 +130,30 @@ const Sidebar = () => {
                     color={colors.grey[100]}
                     fontWeight="bold"
                     sx={{ m: "10px 0 0 0" }}
-                  >
-
-
-
-
-
-
+                 > 
+<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  <Avatar
+    alt={user.email}
+    src={user.photoURL}
+    sx={{ width: 70, height: 70 }}
+  />
+</div>
+<table border="0" cellspacing="0" cellpadding="0" height="0">
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+{/* {document.ad} */}
+  { user ? (<p>{document.ad}</p>) : (<p>...</p>)}
+{console.log("dokuman : ",document)}
+<p></p>
 
            </Typography>
                   <Typography variant="h5" color={colors.greenAccent[500]}>
                   {/* {error ? (<p>....</p>) : user ? (<p>{user.email}</p>) : (<p>...</p>)} */}
-
+                  {user.email}
+                  <p></p>
+                  {user.displayName}
           </Typography>
                 </Box>
               </Box>

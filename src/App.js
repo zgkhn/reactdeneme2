@@ -45,7 +45,7 @@ function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [loading, setLoading] = useState(true);
-
+console.log(user)
   useEffect(() => {
     if (authIsReady) { // Değişiklik 2: Kullanıcı oturumu durumu hazır olduğunda kontrol yapılacak
       setLoading(false);

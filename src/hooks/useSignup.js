@@ -11,7 +11,11 @@ export const useSignup=()=>{
     const [error,setError]=useState(null)
     const [isPending,setIsPending]=useState(false)
     const {dispatch}=useAuthContext();
+    const setDegerSingup= () =>{
+        setError(null)
 
+
+    }
     const signup=async (email,password,userName,thumbnail)=>{
         setError(null)
         setIsPending(true)
@@ -31,20 +35,22 @@ export const useSignup=()=>{
             const imgUrl=await getDownloadURL(storageRef)
     
             updateProfile(response.user,{
-                displayName:userName,
-                photoURL:imgUrl
+                displayName:userName.kod,
+                photoURL:imgUrl,
+
+
             })
             
-            const docRef=doc(db,'kullanicilar',response.user.uid)
+            const docRef=doc(db,'user',response.user.uid)
             await setDoc(docRef,{
-                online:true,
-                kullaniciAd:userName,
-                fotoUrl:imgUrl
+                onay:false,
+                ad:userName.ad,
+                firmakod:userName.kod,
+                password:userName.password,
+                tel:userName.tel
             })
 
-            updateProfile(response.user,{
-                displayName:userName
-            })
+        
 
             dispatch({type:'LOGIN',payload:response.user})
 
@@ -52,11 +58,21 @@ export const useSignup=()=>{
                 setIsPending(false)
                 setError(null)
             
-        } catch (error) {
-                console.log(error.message);
-                setError(error.message);
-                setIsPending(false)
-        }
+            } catch (error) {
+                let errorMessage = 'Bir hata oluştu. Lütfen tekrar deneyin.'; // Default error message
+            
+                if (error.code === 'auth/email-already-in-use') {
+                  errorMessage = 'Bu e-posta adresi zaten kullanılıyor.';
+                } else if (error.code === 'auth/invalid-email') {
+                  errorMessage = 'Geçersiz e-posta adresi.';
+                } else if (error.code === 'auth/weak-password') {
+                  errorMessage = 'Şifre zayıf, daha güçlü bir şifre deneyin.';
+                }
+            
+                console.error(error.message);
+                setError(errorMessage);
+                setIsPending(false);
+              }
 
 
     }
@@ -64,6 +80,6 @@ export const useSignup=()=>{
 
    
 
-    return {error,isPending,signup}
+    return {error,isPending,signup,setDegerSingup}
 
 }

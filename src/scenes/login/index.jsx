@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { useLogin } from '../../hooks/useLogin';
+import { useSignup } from '../../hooks/useSignup';
+import { storage } from '../../firebase/config';
 import { Button, TextField, Box , Grid , Typography , DialogContentText, DialogTitle, useTheme } from '@mui/material';
 import { styled } from '@mui/system';
-import logo from '../../data/img/logo.png';
+import logo1 from '../../data/img/logo.png';
+import CircularProgress from '@mui/material/CircularProgress';
+import { FormControl, InputLabel, Input, FormHelperText,  } from '@mui/material';
 
 
 import { useCollection } from '../../hooks/useallCollection'
@@ -42,21 +46,38 @@ const StyledSignUpButton = styled(Button)`
 
 const Login = () => {
   const [email, setEmail] = useState('');
+  const [pd, setPd] = useState('');
   const [password, setPassword] = useState('');
   const [kod, setkod] = useState('');
-
   const { documents } = useCollection('firmalar');
   const [isRegistering, setIsRegistering] = useState(false); // Add state for registration mode
-  const { error, isPending, login } = useLogin();
+
+  const { error, isPending, login,setDeger} = useLogin();
 
 
 
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [pdError, setPdError] = useState(false);
   const [kodError, setkodError] = useState(false);
   const [telError, setTelError] = useState(false);
   const [adError, setAdError] = useState(false);
+  const [newUserData, setNewUserData] = useState();
+  const {errorr,isPendingg,signup,setDegerSingup} = useSignup();
+
+  const [profileImage, setProfileImage] = useState(null);
+
+
 
 
   const handleUserDataChange = async (field, value) => {
+  
+    setNewUserData((prevData) => ({
+      ...prevData,
+      [field]: value,
+
+    }));
+
     if (field === 'kod') {
       // Ad alanının doğrulamasını yapın
       const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]*$/.test(value);
@@ -81,35 +102,93 @@ const Login = () => {
       // Telefon numarasının doğrulamasını yapın (örnek olarak 10 haneli bir numara kabul ediliyor)
       const isValidTel = /^\d{10}$/.test(value);
       setTelError(!isValidTel);
+
+
+    } else if (field === 'email') {
+      // Telefon numarasının doğrulamasını yapın (örnek olarak 10 haneli bir numara kabul ediliyor)
+      const isValidEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value);
+      setEmailError(!isValidEmail);
+
+
+    } else if (field === 'password') {
+      // Telefon numarasının doğrulamasını yapın (örnek olarak 10 haneli bir numara kabul ediliyor)
+      const isValidPassword = value.length >= 6;      
+      const isPd = pd === value;
+      setPdError(!isPd);
+
+
+      setPasswordError(!isValidPassword);
+
+
+
     } else if (field === 'ad') {
       // Ad alanının doğrulamasını yapın
       const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{1,30}$/.test(value);
 
       setAdError(!isValidAd);
     };
+    
   };
   
 
+  const handleUserDataChange1 = async (field, value) => {
+
+  
+    if (field === 'pd') {
+      const isPasswordMatch = value === newUserData.password;
+      setPd(value)
+      // Parola geçerli değilse veya girdi parola ile uyuşmuyorsa hata göster
+      setPdError(!isPasswordMatch);
+    };
+
+  };
 
 
-
-
+  const handleProfileImageChange = (e) => {
+    const file = e.target.files[0];
+    setProfileImage(file);
+  };
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isRegistering) {
-      // Handle registration here
-      // You can send a request to your registration API endpoint
+     
+      
+
+     if (!emailError && !passwordError && !pdError && !kodError && !telError && !adError && selectedFile) {
+        // Hata yoksa (tüm error değerleri false ise) ve selectedFile boş değilse, bu kodu çalıştır
+        signup(email, password, newUserData, selectedFile);
+      }
+      
+
     } else {
       login(email, password);
     }
   };
 
   const toggleMode = () => {
-    setIsRegistering(!isRegistering); // Toggle between login and registration mode
+    setIsRegistering(!isRegistering); 
+    
+    setDeger();
+    setDegerSingup();
+
+    
+    // Toggle between login and registration mode
   };
 
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleProfileImageChange1 = (event) => {
+    // Profil fotoğrafı seçildiğinde bu işlevi çağırın
+    const file = event.target.files[0];
+    setSelectedFile(file);
+  };
+
+
+console.log("new data ::", newUserData)
+
+console.log("selectedFile ::" ,selectedFile)
   return (
     <StyledBox style={{
       position: 'absolute',
@@ -122,7 +201,7 @@ const Login = () => {
       <Grid style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid >
           <StyledLogo
-            src={logo}
+            src={logo1}
             alt="Logo"
             style={{
               width: '702px',
@@ -186,19 +265,92 @@ const Login = () => {
               type="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              error={emailError}
+              helperText={emailError ? 'Geçersiz Mail Adresi' : ''}
+
+              onChange={(e) => {
+                handleUserDataChange('email', e.target.value);
+                setEmail(e.target.value);
+              }}
+              
               variant="filled"
               margin="normal"
             />
             <TextField
+                        id="filled-adornment-password"
+
               label="Parola"
               type="password"
               required
               margin="normal"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              error={passwordError}
+              helperText={passwordError ? 'Geçersiz Mail Adresi' : ''}
+              onChange={(e) => {
+                handleUserDataChange('password', e.target.value);
+                setPassword(e.target.value);
+              }}
+           
+
               variant="filled"
             />
+
+{isRegistering && (
+              <div sx={{
+                '& .MuiTextField-root': { m: 1, width: '25ch' },
+              }}>
+                {/* Add registration form fields here */}
+                <TextField
+                          id="outlined-required"
+                          type="password"
+
+                  label="Parola Doğrulama"
+                  required
+                  variant="filled"
+                  fullWidth // Bileşeni yatayda tam ekran genişliğinde yapar
+                  margin="normal" // Normal boşluk (diğer seçenekler: "dense", "none")
+                  onChange={(e) => handleUserDataChange1('pd', e.target.value)}
+                  error={pdError}
+                  helperText={pdError ? 'Lütfen Parolayı Doğru Giriniz' : ''}
+                />
+
+                
+  <FormControl fullWidth margin="normal">
+      <InputLabel htmlFor="profile-image">Profil Fotoğrafı</InputLabel>
+      <Input
+        id="profile-image"
+        type="file"
+        accept="image/*"
+        onChange={handleProfileImageChange1}
+        style={{ display: 'none' }} // Dosya seçme düğmesini gizle
+      />
+      <Button
+        variant="contained"
+        component="label"
+        htmlFor="profile-image"
+        style={{ backgroundColor: '#666666', marginTop: '10px' }}
+      >
+        Dosya Ekle
+      </Button>
+      {selectedFile ? (
+        <div>
+          <FormHelperText>{`Dosya yolu: ${selectedFile.name}`}</FormHelperText>
+        </div>
+      ) : (
+        <FormHelperText>Dosya seçilmedi</FormHelperText>
+      )}
+     
+    </FormControl>
+
+
+          
+              </div>
+            )}
+
+
+
+
+
             {!isPending ? (
               <Button variant="contained" color="neutral" type="submit">
                 {isRegistering ? 'Kayıt Ol' : 'Giriş Yap'}
@@ -210,7 +362,7 @@ const Login = () => {
             )}
             {error && (
               <Typography variant="body2" sx={{ color: '#f44336' }}>
-                {error}
+                {error}{errorr}
               </Typography>
             )}
             <Grid container justifyContent="center" sx={{ marginTop: '20px' }}>

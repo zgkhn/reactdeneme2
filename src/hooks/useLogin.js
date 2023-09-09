@@ -11,6 +11,8 @@ export const useLogin=()=>{
     const [isPending,setIsPending]=useState(false)
     const {dispatch}=useAuthContext();
 
+
+
     const login=async (email,password)=>{
 
         setError(null)
@@ -32,15 +34,33 @@ export const useLogin=()=>{
 
 
             
-        } catch (error) {
-
-                console.log(error);
-                setError(error.message)
-                setIsPending(false)
-        }
+            } catch (error) {
+                console.error(error);
+                setIsPending(false);
+    
+                // Firebase hata kodlarına göre özel hata mesajları oluşturun
+                switch (error.code) {
+                    case "auth/user-not-found":
+                        setError("Kullanıcı bulunamadı. Lütfen geçerli bir e-posta adresi ve şifre girin.");
+                        break;
+                    case "auth/wrong-password":
+                        setError("Yanlış şifre. Lütfen doğru şifreyi girin.");
+                        break;
+                    case "auth/invalid-email":
+                        setError("Geçersiz e-posta adresi. Lütfen geçerli bir e-posta adresi girin.");
+                        break;
+                    default:
+                        setError("Giriş yapılamadı. Lütfen daha sonra tekrar deneyin.");
+                        break;
+                }
+            }
     }
 
+const setDeger=async ()=>{
 
+        setError(null)
 
-    return {login,error,isPending}
+    }
+
+    return {login,error,isPending,setDeger}
 }
