@@ -4,12 +4,14 @@ import Team from "./scenes/team";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useDocument } from './hooks/useCollection'
+
 import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import Contacts from "./scenes/contacts";
 import Suruculer from "./scenes/suruculer";
-import Form from "./scenes/form";
+import Form from "./scenes/suruculer1";
 import Calendar from "./scenes/calendar";
 import FAQ from "./scenes/faq";
 import Bar from "./scenes/bar";
@@ -45,16 +47,21 @@ function App() {
   const [theme, colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [loading, setLoading] = useState(true);
+
+ 
+
 console.log(user)
   useEffect(() => {
     if (authIsReady) { // Değişiklik 2: Kullanıcı oturumu durumu hazır olduğunda kontrol yapılacak
       setLoading(false);
+ 
     }
   }, [authIsReady]); // Değişiklik 3: authIsReady bağımlılığı eklendi
 
   if (loading) {
     return <Loading />;
   }
+
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -74,6 +81,8 @@ console.log(user)
                   <>
                     <Route path="/team" element={<Team />} />
                     <Route path="/contacts" element={<Contacts />} />
+
+                    
                     <Route path="/Suruculer" element={<Suruculer />} />
                     <Route path="/form" element={<Form />} />
                     <Route path="/calendar" element={<Calendar />} />

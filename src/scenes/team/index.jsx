@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import Tablee from './table';
+import KuAyar from './ayar';
 import { useCollection } from '../../hooks/useallCollection'
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 
-const Form = () => {
+const Ayar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const { isPending, error, documents } = useCollection('suruculer');
-console.log(documents)
   const columns = [
     {
       Header: '',
@@ -57,12 +56,11 @@ console.log(documents)
 
 
   return (
-    <div>
-      <h1>Form</h1>
-      <Box
-    style={{
+    <div  style={{
       padding: theme.palette.mode === "dark" ? "0 30px" : "0 30px"
-    }}
+    }}>
+      <Box
+  
       >
       <Box
            style={{
@@ -74,10 +72,13 @@ console.log(documents)
 
           >
   
-      <Tablee data={documents} columns={columns} />
+  <KuAyar/>
+
+
+
       </Box></Box>
     </div>
   );
 };
 
-export default Form;
+export default Ayar;

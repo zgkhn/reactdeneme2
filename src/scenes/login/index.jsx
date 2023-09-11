@@ -62,6 +62,9 @@ const Login = () => {
   const [kodError, setkodError] = useState(false);
   const [telError, setTelError] = useState(false);
   const [adError, setAdError] = useState(false);
+
+  const [departmanError, setDepartmanError] = useState(false);
+
   const [newUserData, setNewUserData] = useState();
   const {errorr,isPendingg,signup,setDegerSingup} = useSignup();
 
@@ -118,7 +121,7 @@ const Login = () => {
 
 
       setPasswordError(!isValidPassword);
-
+      
 
 
     } else if (field === 'ad') {
@@ -126,6 +129,11 @@ const Login = () => {
       const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{1,30}$/.test(value);
 
       setAdError(!isValidAd);
+    }else if (field === 'departman') {
+      // Ad alanının doğrulamasını yapın
+      const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{1,30}$/.test(value);
+
+      setDepartmanError(!isValidAd);
     };
     
   };
@@ -257,6 +265,9 @@ console.log("selectedFile ::" ,selectedFile)
 
                 <TextField label="Departman" required fullWidth
                   margin="normal" variant="filled"
+                  onChange={(e) => handleUserDataChange('departman', e.target.value)}
+                  error={departmanError}
+                  helperText={departmanError ? 'Lütfen Departman Giriniz' : ''}
                 />
               </div>
             )}

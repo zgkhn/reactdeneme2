@@ -1,6 +1,5 @@
 import React, { useState, useEffect ,useContext  } from "react";
 import { AuthContext } from '../../contexts/AuthContext';
-import { getFirmaById } from "../../firebase/veri";
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 
@@ -10,33 +9,19 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
-import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import TimeToLeaveIcon from '@mui/icons-material/TimeToLeave';
-import DepartureBoardOutlinedIcon from '@mui/icons-material/DepartureBoardOutlined';
-import AirlineSeatReclineNormalOutlinedIcon from '@mui/icons-material/AirlineSeatReclineNormalOutlined';
-import MedicalServicesOutlinedIcon from '@mui/icons-material/MedicalServicesOutlined';
-import SpatialAudioOutlinedIcon from '@mui/icons-material/SpatialAudioOutlined';
-import GppGoodOutlinedIcon from '@mui/icons-material/GppGoodOutlined';
+import * as MuiIcons from "@mui/icons-material";
+
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useAuthContext } from '../../hooks/useAuthContext'
 
-import { useDocument } from '../../hooks/useCollection'
+import { useDocument,useAllVeri } from '../../hooks/useCollection'
 
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+
 
   return (
     <MenuItem
@@ -56,6 +41,11 @@ const Sidebar = () => {
   const {user} =useAuthContext();
   const { document, error } = useDocument("user", user.uid);
 
+  const { documents: menuItems, error: errore } = useAllVeri("sidebar");
+  
+
+console.log("menuItems : ",menuItems)
+
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -67,6 +57,7 @@ const Sidebar = () => {
         sx={{
           "& .pro-sidebar-inner": {
             background: `${colors.primary[400]} !important`,
+              minHeight: "100vh", // Ensures it fills the viewport height
           },
           "& .pro-icon-wrapper": {
             backgroundColor: "transparent !important",
@@ -76,18 +67,21 @@ const Sidebar = () => {
           },
           "& .pro-inner-item:hover": {
             color: "#868dfb !important",
+            
           },
           "& .pro-menu-item.active": {
             color: "#6870fa !important",
+            
           },
+          
         }}
       >
-        <ProSidebar collapsed={isCollapsed}>
-          <Menu iconShape="square">
+        <ProSidebar collapsed={isCollapsed}   >
+          <Menu iconShape="square" >
             {/* LOGO AND MENU ICON */}
             <MenuItem
               onClick={() => setIsCollapsed(!isCollapsed)}
-              icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+              icon={isCollapsed ? <MuiIcons.MenuOutlined /> : undefined}
               style={{
                 margin: "10px 0 20px 0",
                 color: colors.grey[100],
@@ -95,6 +89,7 @@ const Sidebar = () => {
             >
               {!isCollapsed && (
                 <Box
+
                   display="flex"
                   justifyContent="space-between"
                   alignItems="center"
@@ -107,7 +102,7 @@ const Sidebar = () => {
 
                   </Typography>
                   <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
-                    <MenuOutlinedIcon />
+                  <MuiIcons.MenuOutlined />
                   </IconButton>
                 </Box>
               )}
@@ -138,21 +133,21 @@ const Sidebar = () => {
     sx={{ width: 70, height: 70 }}
   />
 </div>
-<table border="0" cellspacing="0" cellpadding="0" height="0">
-	<tr>
-		<td>&nbsp;</td>
-	</tr>
+<table border="0" cellSpacing="0" cellPadding="0" height="0">
+	
 </table>
-{/* {document.ad} */}
-  { user ? (<p>{document.ad}</p>) : (<p>...</p>)}
-{console.log("dokuman : ",document)}
-<p></p>
+  { document ? (<p>{document.ad}</p>) : (<p>...</p>)}
 
-           </Typography>
-                  <Typography variant="h5" color={colors.greenAccent[500]}>
+
+           </Typography >
+                  <Typography variant="h5" color={colors.greenAccent[500]}   style={{
+                margin: "10px 0 10px 0",
+                
+              
+              }}>
                   {/* {error ? (<p>....</p>) : user ? (<p>{user.email}</p>) : (<p>...</p>)} */}
                   {user.email}
-                  <p></p>
+                  <br></br>
                   {user.displayName}
           </Typography>
                 </Box>
@@ -160,89 +155,28 @@ const Sidebar = () => {
             )}
 
             <Box paddingLeft={isCollapsed ? undefined : "8%"}>
-              <Item
-                title="Ana Sayfa"
-                to="/"
-                icon={<HomeOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
 
 
-              <Item
-                title="Araçlar"
-                to="/team"
-                icon={<TimeToLeaveIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Kiralama Bilgileri"
-                to="/contacts"
-                icon={<DepartureBoardOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Sürücüler"
-                to="/Suruculer"
-                icon={<AirlineSeatReclineNormalOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
+
+            {menuItems.map((menuItem) => {
+  const SelectedIcon = MuiIcons[menuItem.icon]; // Simgeyi seçin
+  return (
+    <Item
+      key={menuItem.id}
+      title={menuItem.title}
+      to={menuItem.to}
+      icon={SelectedIcon && <SelectedIcon />} // Simgeyi JSX içinde kullanın
+      selected={selected}
+      setSelected={setSelected}
+    />
+  );
+})}
 
 
-              <Item
-                title="Servis"
-                to="/form"
-                icon={<MedicalServicesOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Talepler"
-                to="/calendar"
-                icon={<SpatialAudioOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Sigorta"
-                to="/faq"
-                icon={<GppGoodOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
 
+            </Box>
+            <Box  >
 
-              <Item
-                title="Bar Chart"
-                to="/bar"
-                icon={<BarChartOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Pie Chart"
-                to="/pie"
-                icon={<PieChartOutlineOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Line Chart"
-                to="/line"
-                icon={<TimelineOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              <Item
-                title="Geography Chart"
-                to="/geography"
-                icon={<MapOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
             </Box>
           </Menu>
         </ProSidebar>
