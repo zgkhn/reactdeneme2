@@ -1,4 +1,8 @@
 import { tokens } from "../theme";
+//$env:HOST = "0.0.0.0"; $env:PORT = "3000"; npm start
+
+
+
 
 export const mockDataTeam = [
   {

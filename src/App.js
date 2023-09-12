@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Box } from "@mui/material";
-import Team from "./scenes/team";
+import Users from "./scenes/users";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -79,7 +79,7 @@ console.log(user)
 
                 {user && ( // Kullanıcı giriş yapmışsa aşağıdaki rotaları göster
                   <>
-                    <Route path="/team" element={<Team />} />
+                    <Route path="/users" element={<Users />} />
                     <Route path="/contacts" element={<Contacts />} />
 
                     

@@ -14,84 +14,110 @@ export const useEditProfile = () => {
   const [isPending, setIsPending] = useState(false);
   const [eskiPasswordError, setPasswordError] = useState(false);
   const authInstance = getAuth();
+  const [profilError, setProfilError] = useState({});
+  const editProfile = async (userbilgi, newThumbnail, data, pdata) => {
 
-  const editProfile = async (userbilgi, newThumbnail, data) => {
-    setError(null);
+    console.log("userbilgi :",userbilgi)
+    console.log("newThumbnail :", newThumbnail)
+
+    console.log("data :", data)
+
+    console.log("pdata :", pdata)
+
+
     setIsPending(true);
+    setPasswordError(false);
+
+    for (const prop in profilError) {
+      delete profilError[prop];
+    }
+    const setError = (field, value) => {
+      setProfilError((prevProfilError) => ({
+        ...prevProfilError,
+        [field]: value,
+      }));
+    };
+
 
 
 
     try {
       // Kullanıcının şifresini güncelle
-      if (data && data.password) {
+      if (pdata.password) {
         const user = authInstance.currentUser;
 
         try {
-          await signInWithEmailAndPassword(authInstance, userbilgi.email, data.eskiPassword);
+          await signInWithEmailAndPassword(authInstance, userbilgi.email, pdata.eskiPassword);
           // Oturum açma işlemi başarılıysa parolayı güncelle
-          await updatePassword(user, data.password);
-          console.log("Parola güncellendi.");
+          await updatePassword(user, pdata.password);
+
+          setError("success1","ŞİFRE DOĞRU");
+
         } catch (error) {
           // Oturum açma işlemi başarısız olduysa hata mesajını göster
           setPasswordError(true);
+          setError("warning3","Eski şifreniz geçersizdir.");
         }
       }
+    } catch (error) {
+      // İlk if bloğunda genel bir hata meydana geldiyse burada işlemler yapabilirsiniz.
+    }
+
+    try {
       // Eğer yeni bir thumbnail (resim) gönderildiyse, bunu güncelle
       if (newThumbnail) {
         try {
-            console.log("newThumbnail: ", newThumbnail);
-            const filePath = `thumbnails/${userbilgi.uid}/${newThumbnail.name}`;
-            const storageRef = ref(storage, filePath);
-            await uploadBytes(storageRef, newThumbnail);
-    
-            const imgUrl = await getDownloadURL(storageRef);
-    
-            const user = auth.currentUser;
-            if (user) {
-                await updateProfile(user, {
-                    photoURL: imgUrl
-                });
-            }
-    
-            console.log("Güncelleme işlemi tamamlandı.");
-            
-            // Yüklenen resmin boyutunu küçültmek için burada gerekli işlemi yapabilirsiniz.
-            // Örneğin, resmi yeniden boyutlandırabilir veya sıkıştırabilirsiniz.
-            // Bu işlemler için birçok farklı JavaScript kütüphanesi bulunmaktadır.
-            // Örnek olarak, 'sharp' veya 'imagemin' gibi kütüphaneleri kullanabilirsiniz.
-            
-            console.log("Resmin boyutu küçültüldü.");
+          const filePath = `thumbnails/${userbilgi.uid}/${newThumbnail.name}`;
+          const storageRef = ref(storage, filePath);
+          await uploadBytes(storageRef, newThumbnail);
+
+          const imgUrl = await getDownloadURL(storageRef);
+
+          const user = auth.currentUser;
+          if (user) {
+            await updateProfile(user, {
+              photoURL: imgUrl
+            });
+          }
+          setError("success2","RESİM YÜKLENDİ.");
+
+          // Yüklenen resmin boyutunu küçültmek için burada gerekli işlemi yapabilirsiniz.
+          // Örneğin, resmi yeniden boyutlandırabilir veya sıkıştırabilirsiniz.
+          // Bu işlemler için birçok farklı JavaScript kütüphanesi bulunmaktadır.
+          // Örnek olarak, 'sharp' veya 'imagemin' gibi kütüphaneleri kullanabilirsiniz.
         } catch (error) {
-            console.error("Hata oluştu:", error);
+          console.error("Hata oluştu:", error);
+
+          setError("warning3","Üzgünüz, resim yüklerken bir hata meydana geldi.");
         }
+      }
+    } catch (error) {
+      // İkinci if bloğunda genel bir hata meydana geldiyse burada işlemler yapabilirsiniz.
     }
-    
+
+    try {
+      console.log("data :",data)
       // Firebase Firestore'da kullanıcı verilerini güncelle
       if (data) {
         const docRef = doc(db, "user", userbilgi.uid);
 
         // Yalnızca data nesnesindeki password harici verileri güncellemek için bir kopya oluşturun
         const updatedData = { ...data };
-        delete updatedData.password;
-        delete updatedData.eskiPassword;
+      
 
         await updateDoc(docRef, updatedData);
+
+              setError("success3","VERİLER GÜNCELLENDİ");
+
       }
 
-      setIsPending(false);
-      setError(null);
     } catch (error) {
-      let errorMessage = "Bir hata oluştu. Lütfen tekrar deneyin."; // Default error message
+      // Üçüncü if bloğunda genel bir hata meydana geldiyse burada işlemler yapabilirsiniz.
 
-      if (error.code === "auth/weak-password") {
-        errorMessage = "Şifre zayıf, daha güçlü bir şifre deneyin.";
-      }
-
-      console.error(error.message);
-      setError(errorMessage);
-      setIsPending(false);
+      setError("warning3","VERİLER GÜNCELLENEMEDİ ");
     }
+    setIsPending(false);
   };
 
-  return { error, isPending, editProfile, eskiPasswordError };
+  return { profilError, isPending, editProfile, eskiPasswordError };
 };
