@@ -38,21 +38,34 @@ export const useEditProfile = () => {
       }
       // Eğer yeni bir thumbnail (resim) gönderildiyse, bunu güncelle
       if (newThumbnail) {
-        console.log("newThumbnail : ",newThumbnail)
-        const filePath=`thumbnails/${userbilgi.uid}/${newThumbnail.name}`
-        const storageRef = ref(storage,filePath);
-        await uploadBytes(storageRef,newThumbnail);
-        
-        const imgUrl=await getDownloadURL(storageRef)
-
-        const user = auth.currentUser;
-    if (user) {
-        await updateProfile(user, {
-            photoURL: imgUrl
-        });
-
+        try {
+            console.log("newThumbnail: ", newThumbnail);
+            const filePath = `thumbnails/${userbilgi.uid}/${newThumbnail.name}`;
+            const storageRef = ref(storage, filePath);
+            await uploadBytes(storageRef, newThumbnail);
+    
+            const imgUrl = await getDownloadURL(storageRef);
+    
+            const user = auth.currentUser;
+            if (user) {
+                await updateProfile(user, {
+                    photoURL: imgUrl
+                });
+            }
+    
+            console.log("Güncelleme işlemi tamamlandı.");
+            
+            // Yüklenen resmin boyutunu küçültmek için burada gerekli işlemi yapabilirsiniz.
+            // Örneğin, resmi yeniden boyutlandırabilir veya sıkıştırabilirsiniz.
+            // Bu işlemler için birçok farklı JavaScript kütüphanesi bulunmaktadır.
+            // Örnek olarak, 'sharp' veya 'imagemin' gibi kütüphaneleri kullanabilirsiniz.
+            
+            console.log("Resmin boyutu küçültüldü.");
+        } catch (error) {
+            console.error("Hata oluştu:", error);
         }
-      }
+    }
+    
       // Firebase Firestore'da kullanıcı verilerini güncelle
       if (data) {
         const docRef = doc(db, "user", userbilgi.uid);

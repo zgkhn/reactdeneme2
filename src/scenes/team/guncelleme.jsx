@@ -146,6 +146,7 @@ if (error) {
             onChange={(e) => handleUserDataChange('departman', e.target.value)}
             error={departmanError}
             helperText={departmanError ? 'Lütfen Departman Giriniz' : ''}
+            
           />
         </Grid>
         <Grid item xs={12} sm={4}>
@@ -206,9 +207,9 @@ if (error) {
         </Grid>
        
         <Grid item xs={12} sm={2} container justifyContent="center">
-        <input
+  <input
     type="file"
-    accept="image/*"
+    accept="image/*" // Sadece resim dosyalarını kabul eder
     onChange={handleImageUpload}
     style={{ display: "none" }}
     id="image-upload"
@@ -221,13 +222,30 @@ if (error) {
     >
       Fotoğraf Seç
     </Button>
+
+
   </label>
-        {formData.profileImage ? (
-  <Avatar
-    alt="Profil Fotoğrafı"
-    src={URL.createObjectURL(formData.profileImage)}
-    sx={{ width: 100, height: 100, marginTop: 2 }}
-  />
+  {formData.profileImage ? (
+  <>
+    { /\.(jpg|jpeg|png)$/i.test(formData.profileImage.name) ? (
+      <Avatar
+        alt="Profil Fotoğrafı"
+        src={URL.createObjectURL(formData.profileImage)}
+        sx={{ width: 100, height: 100, marginTop: 2 }}
+      />
+    ) : (
+      <>
+        <Alert variant="outlined" severity="warning">
+          jpg , jpeg , png seçin !!
+        </Alert>
+        <Avatar
+          alt="Profil Fotoğrafı"
+          src={user.photoURL}
+          sx={{ width: 100, height: 100, marginTop: 2 }}
+        />
+      </>
+    )}
+  </>
 ) : (
   <Avatar
     alt="Profil Fotoğrafı"
@@ -236,8 +254,8 @@ if (error) {
   />
 )}
 
-        </Grid>
-       
+</Grid>
+
         <Grid item xs={12} sm={2} container justifyContent="center" alignItems="center">
 
           <Button variant="contained" color="primary" onClick={handleSubmit}>
