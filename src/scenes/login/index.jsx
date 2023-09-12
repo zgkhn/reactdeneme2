@@ -296,7 +296,7 @@ console.log("selectedFile ::" ,selectedFile)
               margin="normal"
               value={password}
               error={passwordError}
-              helperText={passwordError ? 'Geçersiz Mail Adresi' : ''}
+              helperText={passwordError ? 'Geçersiz Password' : ''}
               onChange={(e) => {
                 handleUserDataChange('password', e.target.value);
                 setPassword(e.target.value);
