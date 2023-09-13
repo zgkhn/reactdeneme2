@@ -17,13 +17,6 @@ export const useEditProfile = () => {
   const [profilError, setProfilError] = useState({});
   const editProfile = async (userbilgi, newThumbnail, data, pdata) => {
 
-    console.log("userbilgi :",userbilgi)
-    console.log("newThumbnail :", newThumbnail)
-
-    console.log("data :", data)
-
-    console.log("pdata :", pdata)
-
 
     setIsPending(true);
     setPasswordError(false);
@@ -96,7 +89,6 @@ export const useEditProfile = () => {
     }
 
     try {
-      console.log("data :",data)
       // Firebase Firestore'da kullanıcı verilerini güncelle
       if (data) {
         const docRef = doc(db, "user", userbilgi.uid);
@@ -119,5 +111,12 @@ export const useEditProfile = () => {
     setIsPending(false);
   };
 
-  return { profilError, isPending, editProfile, eskiPasswordError };
+
+
+
+
+
+  
+
+  return { profilError, isPending, editProfile, };
 };

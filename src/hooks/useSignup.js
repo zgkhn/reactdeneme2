@@ -43,12 +43,13 @@ export const useSignup=()=>{
             
             const docRef=doc(db,'user',response.user.uid)
             await setDoc(docRef,{
-                onay:false,
+                master:false,
                 departman:userName.departman,
                 ad:userName.ad,
                 firmakod:userName.kod,
-                password:userName.password,
-                tel:userName.tel
+                tel:userName.tel,
+                email:email
+
             })
 
         

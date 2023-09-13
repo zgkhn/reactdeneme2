@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { useLogin } from '../../hooks/useLogin';
-import { useSignup } from '../../hooks/useSignup';
-import { storage } from '../../firebase/config';
-import { Button, TextField, Box, Grid, Typography, DialogContentText, DialogTitle, useTheme } from '@mui/material';
+import React, {useEffect, useState } from 'react';
+
+import { Button, useTheme } from '@mui/material';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import { db } from '../../firebase/config'; // Firebase Firestore bağlantısı
+import { collection, query, where, getDocs } from 'firebase/firestore';
+
+
 import { styled } from '@mui/system';
-import logo1 from '../../data/img/logo.png';
-import { FormControl, InputLabel, Input, FormHelperText, } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
+
 import { tokens } from "../../theme";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import Guncelleme from './guncelleme';
+import ProfilEdit from './profilEdit';
+import FirmaEdit from './firmaEdit';
+
+
 import { useAuthContext } from '../../hooks/useAuthContext'
 
 import { useDocument, useAllVeri } from '../../hooks/useCollection'
@@ -32,14 +40,83 @@ const StyledSignUpButton = styled(Button)`
 function Ayar({ }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { user } = useAuthContext();
-  const { document, error } = useDocument("user", user.uid);
-  const [selectedFile, setSelectedFile] = useState(null);
+const { user } = useAuthContext();
+
+const { document, error } = useDocument("user", user.uid);
+//////////////////////////////////////////////////////////////////////////////////////////
+const { documents, error: errorr } = useAllVeri("user");
+
+// Eşleşen öğeleri saklamak için boş bir dizi oluştur
+const eşleşenDokumanlar = [];
+
+// documents dizisini dönerek firmakod ile user.displayName karşılaştırması yap
+documents.forEach(dokuman => {
+  if (dokuman.firmakod === user.displayName) {
+    // Eşleşen öğeyi eşleşenDokumanlar dizisine ekle
 
 
 
+    eşleşenDokumanlar.push(dokuman);
+  }
+});
+
+// eşleşenDokumanlar dizisinde eşleşen öğeleri bulabilirsiniz
+console.log("eşleşenler :",eşleşenDokumanlar);
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////
+  const [value, setValue] = React.useState('1');
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+
+  const columns = [
+    {
+      Header: '',
+      accessor: 'avatar', // Gerçek veriye göre bu kısmı güncelleyin
+      avatar:true,
+
+     },{
+      Header: 'Adı Soyadı',
+      accessor: 'ad', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+     ara:true
+    },
+    {
+      Header: 'Kullanıcı Adı',
+      accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
+      siralama:false ,
+      ara:true
+
+
+    },
+    {
+      Header: 'Ehliyet Yenileme Tarihi',
+      accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
+    },
+    {
+      Header: 'Belge Türü',
+      accessor: 'ehliyet', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
+    },{
+      Header: 'Email',
+      accessor: 'email', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
+    },
+    {
+      Header: 'Telefon',
+      accessor: 'tel412', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+
+    },
+  ];
 
 
 
@@ -83,54 +160,56 @@ function Ayar({ }) {
       <div align="center">
         <TableContainer>
           <Table id="table" border="0" width="90%" cellSpacing="0" cellPadding="0">
-            <TableHead style={
-  {
-    fontWeight: 'bold',
-    backgroundColor: colors.primary[450],
-    color: '#3c9f87',
-    fontSize: '30px',
-    position: 'relative',
-    overflow: 'hidden',
-  }}>
-  {/* İlk üçgen */}
-  <div
-    style={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      borderTop:  '30px solid '+colors.primary[400],
-      borderRight: '30px solid transparent',
-    }}
-  ></div>
+           
+          <TabContext value={value}>
 
-  {/* İkinci üçgen */}
-  <div
-    style={{
-      position: 'absolute',
-      bottom: 0,
-      right: 0,
-      borderTop: '30px solid transparent',
-      borderRight: '30px solid '+colors.primary[400],
-    }}></div>
+            <TableHead style={
+              {
+                fontWeight: 'bold',
+                backgroundColor: colors.primary[450],
+                color: '#3c9f87',
+                fontSize: '30px',
+                position: 'relative',
+                overflow: 'hidden',
+              }}>
+
 
               <TableRow >
 
                 <TableCell >
-                  <h2>   Kullanıcı Ayarları</h2>
+                 
+                  <TabList onChange={handleChange} aria-label="lab API tabs example">
+                    <Tab label="Profil Ayarları" value="1" style={{fontWeight: 'bold',backgroundColor: colors.primary[450],color: '#3c9f87',fontSize: '13px',position: 'relative',overflow: 'hidden',}} />
+                    <Tab label="Firma Ayarları" value="2" style={{fontWeight: 'bold',backgroundColor: colors.primary[450],color: '#3c9f87',fontSize: '13px',position: 'relative',overflow: 'hidden',}} />
+<Tab
+  label="Kullanıcı Ayarları"
+  value="3"
+  style={{
+    fontWeight: 'bold',
+    backgroundColor: colors.primary[450],
+    color: '#3c9f87',
+    fontSize: '13px',
+    position: 'relative',
+    overflow: 'hidden',
+    display: document.master ? 'block' : 'none', // Gösterme koşulu
+  }}
+/>                  </TabList>
                 </TableCell>
               </TableRow>
-
-
             </TableHead>
             <TableBody >
-
               <TableRow>
-                <TableCell ><Guncelleme />
+                <TableCell >
+                  <TabPanel value="1"><ProfilEdit /></TabPanel>
+                  <TabPanel value="2"><FirmaEdit /></TabPanel>
+                  {/* <TabPanel value="3"><UserTable  data={documents} columns={columns}/></TabPanel> */}
+               
                 </TableCell>
 
               </TableRow>
 
             </TableBody>
+            </TabContext>
 
           </Table>
         </TableContainer>

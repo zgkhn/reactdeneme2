@@ -100,8 +100,7 @@ const MyForm = () => {
       profileImage: file,
     });
     const isPf = /\.(jpg|jpeg|png)$/i.test(file.name);
-    console.log("pf : ", isPf)
-    console.log("pf 2: ", pfError)
+
     { setPfError(!isPf) }
 
   };
@@ -336,7 +335,6 @@ const MyForm = () => {
 )}
 
 
-          {console.log("profilError ::", profilError)}
 
         </Grid>
         <Grid item xs={12} sm={4} >
@@ -367,7 +365,6 @@ const MyForm = () => {
 {/* ///////////////////////////////// */}
 
 
-{console.log("profilError ::", profilError)}
 
 </Grid>
         <Grid item xs={12} sm={6} >

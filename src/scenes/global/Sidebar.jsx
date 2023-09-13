@@ -168,6 +168,7 @@ console.log("menuItems : ",menuItems)
       icon={SelectedIcon && <SelectedIcon />} // Simgeyi JSX içinde kullanın
       selected={selected}
       setSelected={setSelected}
+      
     />
   );
 })}
