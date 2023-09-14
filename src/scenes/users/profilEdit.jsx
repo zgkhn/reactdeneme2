@@ -284,7 +284,7 @@ const MyForm = () => {
                     </Alert>
                     <Avatar
                       alt="Profil Fotoğrafı"
-                      src={user.photoURL}
+                      src={document.photoURL}
                       sx={{ width: 100, height: 100, marginTop: 2 }}
                     />
 
@@ -296,7 +296,7 @@ const MyForm = () => {
               <>
                 <Avatar
                   alt="Profil Fotoğrafı"
-                  src={user.photoURL}
+                  src={document.photoURL}
                   sx={{ width: 100, height: 100, marginTop: 2 }}
                 />  </>
             )}

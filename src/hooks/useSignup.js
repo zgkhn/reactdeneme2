@@ -48,7 +48,9 @@ export const useSignup=()=>{
                 ad:userName.ad,
                 firmakod:userName.kod,
                 tel:userName.tel,
-                email:email
+                email:email,
+                photoURL:imgUrl,
+
 
             })
 

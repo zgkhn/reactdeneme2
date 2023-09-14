@@ -16,6 +16,7 @@ import { tokens } from "../../theme";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import ProfilEdit from './profilEdit';
 import FirmaEdit from './firmaEdit';
+import UserTable  from './table';
 
 
 import { useAuthContext } from '../../hooks/useAuthContext'
@@ -51,13 +52,17 @@ const eşleşenDokumanlar = [];
 
 // documents dizisini dönerek firmakod ile user.displayName karşılaştırması yap
 documents.forEach(dokuman => {
-  if (dokuman.firmakod === user.displayName) {
+  if (dokuman.firmakod === user.displayName && dokuman.id !== user.uid ) {
     // Eşleşen öğeyi eşleşenDokumanlar dizisine ekle
 
 
-
     eşleşenDokumanlar.push(dokuman);
+
+
+
   }
+  console.log("sdsdsd :",dokuman);
+
 });
 
 // eşleşenDokumanlar dizisinde eşleşen öğeleri bulabilirsiniz
@@ -76,46 +81,62 @@ console.log("eşleşenler :",eşleşenDokumanlar);
   const columns = [
     {
       Header: '',
-      accessor: 'avatar', // Gerçek veriye göre bu kısmı güncelleyin
+      accessor: 'photoURL', // Gerçek veriye göre bu kısmı güncelleyin
       avatar:true,
+      sm: 0.5, // İlgili sütunun genişliği
+      align: 'center',
+
 
      },{
       Header: 'Adı Soyadı',
       accessor: 'ad', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-     ara:true
-    },
-    {
-      Header: 'Kullanıcı Adı',
-      accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
-      siralama:false ,
-      ara:true
-
+     ara:true,
+     sm: 2 ,// İlgili sütunun genişliği
+     siralama :true
 
     },
+   
     {
-      Header: 'Ehliyet Yenileme Tarihi',
-      accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
-      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-
-    },
-    {
-      Header: 'Belge Türü',
-      accessor: 'ehliyet', // Gerçek veriye göre bu kısmı güncelleyin
-      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-
-    },{
       Header: 'Email',
       accessor: 'email', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+      ara:true,
+      sm: 2 ,// İlgili sütunun genişliği
+      siralama :true
 
     },
     {
       Header: 'Telefon',
-      accessor: 'tel412', // Gerçek veriye göre bu kısmı güncelleyin
+      accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+      ara:true,
+      sm: 2 ,// İlgili sütunun genişliği
+      siralama :true
 
     },
+    {
+      Header: 'Departman',
+      accessor: 'departman', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+      ara:true,
+      sm: 2, // İlgili sütunun genişliği
+      siralama :true
+
+    },  {
+      Header: 'Açıklama',
+      accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+      ara:true,
+      sm: 6 ,// İlgili sütunun genişliği
+      bilgi:true
+    }, {
+      Header: 'Yetkiler',
+      accessor: 'Yetki', // Gerçek veriye göre bu kısmı güncelleyin
+      sm: 0.5, // İlgili sütunun genişliği
+      align: 'center',
+      ayar:true
+     }
   ];
 
 
@@ -202,7 +223,7 @@ console.log("eşleşenler :",eşleşenDokumanlar);
                 <TableCell >
                   <TabPanel value="1"><ProfilEdit /></TabPanel>
                   <TabPanel value="2"><FirmaEdit /></TabPanel>
-                  {/* <TabPanel value="3"><UserTable  data={documents} columns={columns}/></TabPanel> */}
+                  <TabPanel value="3"><UserTable  data={eşleşenDokumanlar} columns={columns}/></TabPanel>
                
                 </TableCell>
 

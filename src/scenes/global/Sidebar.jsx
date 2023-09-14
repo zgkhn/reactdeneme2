@@ -51,7 +51,15 @@ console.log("menuItems : ",menuItems)
     const colors = tokens(theme.palette.mode);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [selected, setSelected] = useState("dashboard");
+  // Veri yüklenene kadar yükleme göster
+  if (document === null) {
+    return <p>Veri yükleniyor...</p>;
+  }
 
+  // Hata durumunu ele al
+  if (error) {
+    return <p>Hata oluştu: {error.message}</p>;
+  }
     return (
       <Box
         sx={{
@@ -107,7 +115,7 @@ console.log("menuItems : ",menuItems)
                 </Box>
               )}
             </MenuItem>
-
+ 
             {!isCollapsed && (
               <Box mb="25px">
                 {/* <Box display="flex" justifyContent="center" alignItems="center">
@@ -129,14 +137,14 @@ console.log("menuItems : ",menuItems)
 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
   <Avatar
     alt={user.email}
-    src={user.photoURL}
+    src={document.photoURL}
     sx={{ width: 70, height: 70 }}
   />
 </div>
 <table border="0" cellSpacing="0" cellPadding="0" height="0">
 	
 </table>
-  { document ? (<p>{document.ad}</p>) : (<p>...</p>)}
+  { document.ad}
 
 
            </Typography >

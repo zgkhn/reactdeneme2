@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { db } from "../firebase/config";
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, onSnapshot , collection, getDocs } from 'firebase/firestore';
 
 export const useDocument = (koleksiyon, id) => {
     const [document, setDocument] = useState(null);
@@ -9,25 +9,22 @@ export const useDocument = (koleksiyon, id) => {
     useEffect(() => {
         const docRef = doc(db, koleksiyon, id);
 
-        const getDocument = async () => {
-            try {
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    setDocument({ ...docSnap.data(), id: docSnap.id });
-                    setError(null);
-                } else {
-                    setError("Belge bulunamadı");
-                }
-            } catch (error) {
-                console.error(error);
-                setError("Verilere erişilemedi");
+        // Firestore belgesinin anlık güncellemelerini izle
+        const unsubscribe = onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                setDocument({ ...docSnap.data(), id: docSnap.id });
+                setError(null);
+            } else {
+                setError("Belge bulunamadı");
             }
-        };
-
-        getDocument();
+        }, (err) => {
+            console.error(err);
+            setError("Verilere erişilemedi");
+        });
 
         return () => {
-            // Cleanup işlemleri burada yapılabilir.
+            // Temizleme işlemi: dinleme işlemi sonlandırılır
+            unsubscribe();
         };
     }, [koleksiyon, id]);
 
@@ -42,25 +39,23 @@ export const useAllVeri = (koleksiyon) => {
     useEffect(() => {
         const koleksiyonRef = collection(db, koleksiyon);
 
-        const getCollection = async () => {
-            try {
-                const koleksiyonSnap = await getDocs(koleksiyonRef);
-                const koleksiyonData = koleksiyonSnap.docs.map((doc) => ({
-                    ...doc.data(),
-                    id: doc.id,
-                }));
-                setDocuments(koleksiyonData);
-                setError(null);
-            } catch (error) {
-                console.error(error);
-                setError("Verilere erişilemedi");
-            }
-        };
+        // onSnapshot ile koleksiyon değişikliklerini dinle
+        const unsubscribe = onSnapshot(koleksiyonRef, (koleksiyonSnap) => {
+            const koleksiyonData = koleksiyonSnap.docs.map((doc) => ({
+                ...doc.data(),
+                id: doc.id,
+            }));
+            setDocuments(koleksiyonData);
+            setError(null);
+        }, (error) => {
+            console.error(error);
+            setError("Verilere erişilemedi");
+        });
 
-        getCollection();
-
+        // Temizlik fonksiyonunu döndürün
         return () => {
-            // Cleanup işlemleri burada yapılabilir.
+            // Abonelikten çıkın (componentWillUnmount mantığı)
+            unsubscribe();
         };
     }, [koleksiyon]);
 

@@ -66,11 +66,16 @@ export const useEditProfile = () => {
 
           const imgUrl = await getDownloadURL(storageRef);
 
-          const user = auth.currentUser;
-          if (user) {
-            await updateProfile(user, {
+          const docRef = doc(db, "user", userbilgi.uid);
+          if (docRef) {
+
+
+            const updatedData = {
               photoURL: imgUrl
-            });
+            };
+            
+            await updateDoc(docRef, updatedData);
+
           }
           setError("success2","RESİM YÜKLENDİ.");
 
