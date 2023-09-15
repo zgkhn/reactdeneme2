@@ -201,7 +201,20 @@ console.log("eşleşenler :",eşleşenDokumanlar);
                  
                   <TabList onChange={handleChange} aria-label="lab API tabs example">
                     <Tab label="Profil Ayarları" value="1" style={{fontWeight: 'bold',backgroundColor: colors.primary[450],color: '#3c9f87',fontSize: '13px',position: 'relative',overflow: 'hidden',}} />
-                    <Tab label="Firma Ayarları" value="2" style={{fontWeight: 'bold',backgroundColor: colors.primary[450],color: '#3c9f87',fontSize: '13px',position: 'relative',overflow: 'hidden',}} />
+
+                    <Tab
+  label="Firma Ayarları"
+  value="2"
+  style={{
+    fontWeight: 'bold',
+    backgroundColor: colors.primary[450],
+    color: '#3c9f87',
+    fontSize: '13px',
+    position: 'relative',
+    overflow: 'hidden',
+    display: document.master ? 'block' : 'none', // Gösterme koşulu
+  }}
+/> 
 <Tab
   label="Kullanıcı Ayarları"
   value="3"
