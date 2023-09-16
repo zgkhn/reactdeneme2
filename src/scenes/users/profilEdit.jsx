@@ -14,18 +14,14 @@ const MyForm = () => {
   const [password, setPassword] = useState('');
   const { profilError, isPending, editProfile, eskiPasswordError } = useEditProfile();
   const [newwUserData, setNewwUserData] = useState();
-
   const [pd, setPd] = useState('');
   const [isRegistering, setIsRegistering] = useState(false); // Add state for registration mode
   const [passwordError, setPasswordError] = useState(false);
   const [pfError, setPfError] = useState(false);
   const [eksikError, setEksik] = useState(false);
-
   const [pdError, setPdError] = useState(false);
   const [telError, setTelError] = useState(false);
   const [adError, setAdError] = useState(false);
-
-
   const [departmanError, setDepartmanError] = useState(false);
 
 
