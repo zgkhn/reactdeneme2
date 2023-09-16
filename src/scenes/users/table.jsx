@@ -1,32 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState  } from 'react';
 import { useTable, useFilters, usePagination, useSortBy } from 'react-table';
-import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+
 import './tablo.css'; // CSS dosyasını içe aktar
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import PostAddIcon from '@mui/icons-material/PostAdd';
+
 import SearchIcon from '@mui/icons-material/Search';
 import { Button, TextField, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { ThemeProvider } from '@mui/material/styles';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { tokens } from "../../theme";
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
-import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import PersonelPopup from './PersonelPopup';
 import HttpsIcon from '@mui/icons-material/Https';
-import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 
-function Tablee({ data, columns }) {
-  const [openDialog, setOpenDialog] = useState(false);
 
-  const personelAdd = () => {
+function Tablee({ data, columns }) {
+
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRecordId, setSelectedRecordId] = useState(null);
+
+  const handlePopupOpen = (recordId) => {
+    setSelectedRecordId(recordId);
     setOpenDialog(true);
   };
+
+  const handlePopupClose = () => {
+    setSelectedRecordId(null);
+    setOpenDialog(false);
+  };
+
+
+
+  
+
+
+
 
   const [searchText, setSearchText] = useState('');
 
@@ -67,53 +76,15 @@ function Tablee({ data, columns }) {
     usePagination
   );
 
-  const exportToExcel = () => {
-    // Yalnızca belirli sütunları içeren yeni bir veri oluşturun
-    const filteredDataForExport = filteredData.map(item => {
-      const rowData = {};
-      columns.forEach(column => {
-        rowData[column.Header] = item[column.accessor];
-      });
-      return rowData;
-    });
-
-    const workSheet = XLSX.utils.json_to_sheet(filteredDataForExport); // Filtrelenmiş verileri kullanarak sayfa oluştur
-    const workBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'Tablo Verileri');
-    const excelBuffer = XLSX.write(workBook, {
-      bookType: 'xlsx',
-      type: 'array',
-    });
-    const blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tablo-verileri.xlsx';
-    a.click();
-  };
 
 
-  const exportToPDF = () => {
-    const doc = new jsPDF({
-      orientation: 'landscape', // Sayfayı yan çevir
-    });
-
-    doc.autoTable({
-      html: '#table',
-      margin: { top: 10 }, // Tabloyu sayfanın üst kısmına yakın bir konumda başlat
-      tableWidth: 'auto', // Tabloyu sayfaya otomatik olarak sığdır
-      theme: 'grid', // İstediğiniz tema seçeneğini kullanabilirsiniz
-    });
-
-    doc.save('tablo-verileri.pdf');
-  };
+  
   return (
 
     <div>
-      <PersonelPopup open={openDialog} onClose={() => setOpenDialog(false)} />
-
+      {selectedRecordId !== null && selectedRecordId !== undefined && (
+      <PersonelPopup open={openDialog} onClose={handlePopupClose} selectedRecordId={selectedRecordId} />
+      )}
       <div align="center">
         <TableContainer
 
@@ -220,12 +191,10 @@ function Tablee({ data, columns }) {
                 return (
                   <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                      <IconButton>
-                        <HttpsIcon onClick={exportToExcel} />
+                      <IconButton onClick={() => handlePopupOpen(row.original.id)}>
+                        <HttpsIcon />
                       </IconButton>
-                      <IconButton>
-                        <DeleteIcon onClick={exportToExcel} />
-                      </IconButton>
+                     
                     </div>
                   </TableCell>
                 );
@@ -269,7 +238,16 @@ function Tablee({ data, columns }) {
         <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(100)}>50</Button>
       </div>
       <div >
-        <p>&nbsp;</p>    </div>
+        <p>&nbsp;</p>   
+        
+        
+      
+        
+        
+        
+        
+        
+          </div>
     </div>
   );
 }

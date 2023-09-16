@@ -150,13 +150,19 @@ const MyForm = () => {
         </Grid>
 
        
-
         <Grid item xs={12} sm={1} container justifyContent="center" alignItems="center">
+  {newUserData ? (
+    <Button variant="contained" color="primary" onClick={handleSubmit}>
+      Güncelle
+    </Button>
+  ) : (
+    // Else kısmına eklemek istediğiniz JSX'i buraya ekleyebilirsiniz
+    // Örnek: <p>Hata mesajı</p>
+    // veya <div>Başka bir şey</div>
+    null // Eğer bir şey eklemek istemiyorsanız null kullanabilirsiniz
+  )}
+</Grid>
 
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Güncelle
-          </Button>
-        </Grid>
 
      
 
