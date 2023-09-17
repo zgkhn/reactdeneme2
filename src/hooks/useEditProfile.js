@@ -60,13 +60,13 @@ export const useEditProfile = () => {
       // Eğer yeni bir thumbnail (resim) gönderildiyse, bunu güncelle
       if (newThumbnail) {
         try {
-          const filePath = `thumbnails/${userbilgi.uid}/${newThumbnail.name}`;
+          const filePath = `thumbnails/${userbilgi.id}/${newThumbnail.name}`;
           const storageRef = ref(storage, filePath);
           await uploadBytes(storageRef, newThumbnail);
 
           const imgUrl = await getDownloadURL(storageRef);
 
-          const docRef = doc(db, "user", userbilgi.uid);
+          const docRef = doc(db, "user", userbilgi.id);
           if (docRef) {
 
 
@@ -96,7 +96,7 @@ export const useEditProfile = () => {
     try {
       // Firebase Firestore'da kullanıcı verilerini güncelle
       if (data) {
-        const docRef = doc(db, "user", userbilgi.uid);
+        const docRef = doc(db, "user", userbilgi.id);
 
         // Yalnızca data nesnesindeki password harici verileri güncellemek için bir kopya oluşturun
         const updatedData = { ...data };

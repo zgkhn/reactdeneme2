@@ -11,14 +11,23 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { tokens } from "../../theme";
 import Avatar from '@mui/material/Avatar';
 import PersonelPopup from './PersonelPopup';
+import MyForm from './profilEditextra';
+
+
 import HttpsIcon from '@mui/icons-material/Https';
 import IconButton from '@mui/material/IconButton';
-
+import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
 
 function Tablee({ data, columns }) {
 
+
+
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedRecordId, setSelectedRecordId] = useState(null);
+
+
+  const [openDialog1, setOpenDialog1] = useState(false);
+  const [selectedRecordId1, setSelectedRecordId1] = useState(null);
 
   const handlePopupOpen = (recordId) => {
     setSelectedRecordId(recordId);
@@ -30,7 +39,15 @@ function Tablee({ data, columns }) {
     setOpenDialog(false);
   };
 
+  const handlePopupOpen1 = (recordId) => {
+    setSelectedRecordId1(recordId);
+    setOpenDialog1(true);
+  };
 
+  const handlePopupClose1 = () => {
+    setSelectedRecordId1(null);
+    setOpenDialog1(false);
+  };
 
   
 
@@ -85,6 +102,11 @@ function Tablee({ data, columns }) {
       {selectedRecordId !== null && selectedRecordId !== undefined && (
       <PersonelPopup open={openDialog} onClose={handlePopupClose} selectedRecordId={selectedRecordId} />
       )}
+      {selectedRecordId1 !== null && selectedRecordId1 !== undefined && (
+      <MyForm open={openDialog1} onClose={handlePopupClose1} id={selectedRecordId1} />
+      )}
+
+
       <div align="center">
         <TableContainer
 
@@ -194,7 +216,9 @@ function Tablee({ data, columns }) {
                       <IconButton onClick={() => handlePopupOpen(row.original.id)}>
                         <HttpsIcon />
                       </IconButton>
-                     
+                      <IconButton onClick={() => handlePopupOpen1(row.original.id)}>
+                        <SettingsSuggestIcon  />
+                      </IconButton>
                     </div>
                   </TableCell>
                 );

@@ -1,0 +1,16 @@
+.dialog-container {
+    max-height: 80vh; /* Örnek bir maksimum yükseklik, ihtiyaca göre ayarlayın */
+    overflow-y: auto; /* İçeriğin boyutu aşıldığında kaydırma çubuğunu görüntüler */
+  }
+  .custom-div {
+    width: 150%; /* Genişlik */
+    height: auto; /* Yükseklik */
+  }
+  .form-container {
+    max-width: 100%; /* Sayfanın %80 genişliği */
+    margin: 0 auto; /* Formu sayfanın ortasına hizalamak için kullanılır */
+    padding: 20px; /* Forma iç boşluk ekler */
+    border: 1px solid #ccc; /* Forma bir kenarlık ekler */
+    border-radius: 5px; /* Form köşelerini yuvarlar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Forma gölge ekler */
+  }

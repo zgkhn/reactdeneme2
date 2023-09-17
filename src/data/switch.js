@@ -1,14 +1,15 @@
 export const switches = [
   {
-    "name": "Bu kod, display: 'flex' özelliği kullanarak içerikleri yatayda hizalamak için bir div içinde iki alt div kullanır. Sol tarafta metni (ListItemText), sağ tarafta",
+    "name": "Sürücüler Sayfası :"
+,
     "permissions": [
       {
-        "value": "okuma1",
-        "name": "okuma"
+        "value": "SuruculerOkuma",
+        "name": "Görüntüleye bilir."
       },
       {
-        "value": "yazma1",
-        "name": "yazma"
+        "value": "SuruculerYazma",
+        "name": "Tam Yetki"
       }
     ]
   }

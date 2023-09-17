@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, Avatar, Box } from '@mui/material';
+import { Button, TextField, Dialog,Typography,  DialogActions,Avatar,Box ,Grid, DialogContent, DialogContentText, DialogTitle, useTheme } from '@mui/material';
+import './styles.css'; 
+
 import { useAuthContext } from '../../hooks/useAuthContext'
 import Input from '@mui/material/Input';
 import { useDocument, useAllVeri } from '../../hooks/useCollection'
@@ -9,18 +11,15 @@ import Stack from '@mui/material/Stack';
 
 
 
-const MyForm = (gelenid) => {
+function MyForm({ open, onClose, id }) {
+
+
   const { user } = useAuthContext();
 
 
 
-
-
-
-  
-  const { document, error } = useDocument("user", user.uid);
-
-
+  console.log("sssssssssss:",id)
+  const { document, error } = useDocument("user", id);
 
 
 
@@ -143,6 +142,10 @@ const MyForm = (gelenid) => {
   };
 
 
+  const handleClose = () => {
+    // Popup'ı kapatmak için onClose callback'ini çağır
+    onClose();
+  };
   // Veri yüklenene kadar yükleme göster
   if (document === null) {
     return <p>Veri yükleniyor...</p>;
@@ -153,8 +156,13 @@ const MyForm = (gelenid) => {
     return <p>Hata oluştu: {error.message}</p>;
   }
 
+
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="dialog-container">
+    <Dialog open={open} onClose={handleClose}  >
+    <div className="form-container" >
+
+  <form onSubmit={handleSubmit}>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={12}>
 
@@ -195,43 +203,7 @@ const MyForm = (gelenid) => {
 
           />
         </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            fullWidth
-            label="Eski Parola"
-            type="password"
-            name="password"
-            error={eskiPasswordError}
-            helperText={eskiPasswordError ? 'Hatalı Parola' : ''}
-            onChange={(e) => {
-              handleUserDataChange('eskiPassword', e.target.value);
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            fullWidth
-            label="Yeni Parola"
-            type="password"
-            name="password"
-            error={passwordError}
-            helperText={passwordError ? 'Geçersiz Parola Adresi' : ''}
-            onChange={(e) => {
-              handleUserDataChange('password', e.target.value);
-              setPassword(e.target.value);
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <TextField
-            fullWidth
-            label="Parola Doğrulama"
-            type="password"
-            name="confirmPassword"
-            onChange={(e) => handleUserDataChange1('pd', e.target.value)}
-            error={pdError}
-            helperText={pdError ? 'Lütfen Parolayı Doğru Giriniz' : ''} />
-        </Grid>
+   
 
 
 
@@ -252,74 +224,11 @@ const MyForm = (gelenid) => {
           />
         </Grid>
 
-        <Grid item xs={12} sm={2} container justifyContent="center">
-
-
-
-          <Grid container justifyContent="center">
-            <input
-              type="file"
-              accept="image/*" // Sadece resim dosyalarını kabul eder
-              onChange={handleImageUpload}
-              style={{ display: "none" }}
-              id="image-upload"
-            />
-            <label htmlFor="image-upload">
-              <Button
-                variant="contained"
-                color="primary"
-                component="span"
-              >
-                Fotoğraf Seç
-              </Button>
-
-
-            </label>
-          </Grid>
-
-          <Grid container justifyContent="center">
-            {formData.profileImage ? (
-              <>
-                {/\.(jpg|jpeg|png)$/i.test(formData.profileImage.name) ? (
-                  <><Avatar
-                    alt="Profil Fotoğrafı"
-                    src={URL.createObjectURL(formData.profileImage)}
-                    sx={{ width: 100, height: 100, marginTop: 2 }}
-
-
-                  />
-                  </>
-                ) : (
-                  <>
-                    <Alert variant="outlined" severity="warning">
-                      jpg , jpeg , png seçin !!
-                    </Alert>
-                    <Avatar
-                      alt="Profil Fotoğrafı"
-                      src={document.photoURL}
-                      sx={{ width: 100, height: 100, marginTop: 2 }}
-                    />
-
-
-                  </>
-                )}
-              </>
-            ) : (
-              <>
-                <Avatar
-                  alt="Profil Fotoğrafı"
-                  src={document.photoURL}
-                  sx={{ width: 100, height: 100, marginTop: 2 }}
-                />  </>
-            )}
-
-
-          </Grid>
+        
 
 
 
 
-        </Grid>
 
         <Grid item xs={12} sm={2} container justifyContent="center" alignItems="center">
 
@@ -379,16 +288,13 @@ const MyForm = (gelenid) => {
 
 
 </Grid>
-        <Grid item xs={12} sm={6} >
-
-        </Grid>
-
-        <Grid item xs={12} >
-
-        </Grid>
+     
 
       </Grid>
     </form>
+    </div>
+    </Dialog>
+    </div>
   );
 };
 

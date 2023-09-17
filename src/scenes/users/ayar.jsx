@@ -234,7 +234,7 @@ console.log("eşleşenler :",eşleşenDokumanlar);
             <TableBody >
               <TableRow>
                 <TableCell >
-                  <TabPanel value="1"><ProfilEdit /></TabPanel>
+                  <TabPanel value="1"><ProfilEdit gelenid={user.uid} /></TabPanel>
                   <TabPanel value="2"><FirmaEdit /></TabPanel>
                   <TabPanel value="3"><UserTable  data={eşleşenDokumanlar} columns={columns}/></TabPanel>
                

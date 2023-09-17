@@ -132,7 +132,7 @@ const handleSave = () => {
             </div>
             <div>
               {item.permissions && item.permissions.map((permission, permissionIndex) => (
-                <div key={permissionIndex} style={{ display: 'flex', alignItems: 'center' }}>
+        <div key={permissionIndex} style={{ display: 'inline-block', marginRight: '10px' }}>
                   
                   
                   
