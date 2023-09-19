@@ -6,16 +6,18 @@ import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentT
 import moment from "moment";
 import 'moment/locale/tr'
 import { auth, db } from "../../firebase/config"; // Firebase yapılandırması
-import {doc,updateDoc} from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 import { useCollection } from '../../hooks/useallCollection'
+import { useSignup } from '../../hooks/useSignupNew';
 
 import { tokens } from "../../theme";
 
 function PersonelPopup({ open, onClose }) {
+  const {errorr,isPendingg,signup,setDegerSingup} = useSignup();
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { isPending, error, documents } = useCollection('suruculer');
+  const { isPending, error, documents } = useCollection('user');
 
 
 
@@ -36,6 +38,7 @@ function PersonelPopup({ open, onClose }) {
   const [ehliyetError, setEhliyetError] = useState(false);
   const [tarihError, setTarihError] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [newUserData, setNewUserData] = useState();
 
   const handleClose = () => {
     // Popup'ı kapatmak için onClose callback'ini çağır
@@ -43,6 +46,13 @@ function PersonelPopup({ open, onClose }) {
   };
 
   const handleUserDataChange = (field, value) => {
+
+    setNewUserData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+
+
     if (field === 'ad') {
       // Ad alanının doğrulamasını yapın
       const isValidAd = /^[a-zA-ZğüşıöçĞÜŞİÖÇ\s]{1,30}$/.test(value);
@@ -56,13 +66,13 @@ function PersonelPopup({ open, onClose }) {
     } else if (field === 'email') {
       // E-posta adresi doğrulamasını yapın
       const isValidEmail = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(value);
-    
+
       if (!isValidEmail) {
         setEmailError(true);
       } else {
         // E-posta adresi doğru ise, suruculer tablosundaki verileri kontrol et
         const isEmailInSuruculer = documents.some((id) => id === value);
-    
+
         if (isEmailInSuruculer) {
           // E-posta adresi suruculer tablosunda bulunuyor
           setEmailError(true);
@@ -85,47 +95,39 @@ function PersonelPopup({ open, onClose }) {
     }
 
     // Değerleri güncelle
-    switch (field) {
-      case 'ad':
-        setName(value);
-        break;
-      case 'tel':
-        setPhone(value);
-        break;
-      case 'ehliyet':
-        setLicenseType(value);
-        break;
-      case 'tarih':
-        setLicenseRenewalDate(value);
-        break;
-        case 'email':
-          setEmail(value);
-          break;
-      default:
-        break;
-    }
+
   };
 
-  const handleSave = () => {
-    // Kullanıcı kaydı işlemlerini burada gerçekleştirin
-    // Firebase veya başka bir veritabanı hizmetini kullanabilirsiniz
-    // Geçerli alan değerlerini kullanarak kaydı yapın
-    // Ayrıca veri doğrulaması yapmayı unutmayın
-
-    // Örnek olarak profil fotoğrafını Firebase Storage'a yüklemek:
-    if (profilePhoto) {
-      const storageRef = firebase.storage().ref();
-      const photoRef = storageRef.child(`profile_photos/${email}`);
-      photoRef.put(profilePhoto).then((snapshot) => {
-        // Profil fotoğrafı yüklendikten sonra snapshot.downloadURL veya storageRef.getDownloadURL kullanarak URL alabilirsiniz.
-        // Bu URL'i veritabanında saklayabilirsiniz.
-      });
-    }
-
-    handleClose();
-  };
   const oneDayAgo = new Date(currentDate);
   oneDayAgo.setDate(currentDate.getDate() - 1);
+  const handleSave = () => {
+
+
+
+    // if (!emailError && !passwordError && !pdError && !kodError && !telError && !adError && selectedFile) {
+    //   // Hata yoksa (tüm error değerleri false ise) ve selectedFile boş değilse, bu kodu çalıştır
+      signup(newUserData.email, newUserData.password, newUserData, profilePhoto);
+    // }
+
+
+
+
+    // if (profilePhoto) {
+    //   const storageRef = firebase.storage().ref();
+    //   const photoRef = storageRef.child(`profile_photos/${email}`);
+    //   photoRef.put(profilePhoto).then((snapshot) => {
+    //     // Profil fotoğrafı yüklendikten sonra snapshot.downloadURL veya storageRef.getDownloadURL kullanarak URL alabilirsiniz.
+    //     // Bu URL'i veritabanında saklayabilirsiniz.
+    //   });
+    // }
+
+
+    handleClose(); {
+
+    }
+
+
+  };
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
@@ -141,7 +143,7 @@ function PersonelPopup({ open, onClose }) {
           fullWidth
           onChange={(e) => handleUserDataChange('email', e.target.value)}
 
-                    error={emailError}
+          error={emailError}
           helperText={emailError ? 'Geçersiz e-posta adresi.' : ''}
         />
         <TextField
@@ -157,7 +159,7 @@ function PersonelPopup({ open, onClose }) {
           label="Şifre"
           type="password"
           fullWidth
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => handleUserDataChange('password', e.target.value)}
         />
         <TextField
           margin="dense"
@@ -204,12 +206,12 @@ function PersonelPopup({ open, onClose }) {
           fullWidth
           multiline
           rows={4}
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={(e) => handleUserDataChange('bilgi', e.target.value)}
         />
       </DialogContent>
       <DialogActions>
-        <Button style={{ margin: '0 5px', backgroundColor:colors.primary[450]  }} onClick={handleClose}>İptal</Button>
-        <Button style={{ margin: '0 5px', backgroundColor:colors.primary[450]  }} onClick={handleSave} color="primary">
+        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} onClick={handleClose}>İptal</Button>
+        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} onClick={handleSave} color="primary">
           Kaydet
         </Button>
       </DialogActions>

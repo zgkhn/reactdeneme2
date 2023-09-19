@@ -27,6 +27,149 @@ export const switches = [
       }
     ]
   }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
+  , {
+    "name": "admin yetkisi",
+    "permissions": [
+      {
+        "value": "okuma2",
+        "name": "okuma"
+      },
+      {
+        "value": "yazma2",
+        "name": "yazma"
+      }
+    ]
+  }
   ,
   {
     "name": "admin yetkisi",
