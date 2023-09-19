@@ -191,7 +191,8 @@ function Tablee({ data, columns }) {
   {  fontWeight: 'bold',
   backgroundColor:colors.primary[450],
   color: '#3c9f87',
-  fontSize: '30px'}    }> 
+  fontSize: '30px'
+  }    }> 
               {headerGroups.map((headerGroup) => (
   
   <TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -221,7 +222,7 @@ function Tablee({ data, columns }) {
            
               ))}
             </TableHead>
-            <TableBody {...getTableBodyProps()}>
+            <TableBody {...getTableBodyProps()}       >
     {page.map((row) => {
       prepareRow(row);
       return (
