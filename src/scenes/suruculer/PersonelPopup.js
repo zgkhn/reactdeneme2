@@ -1,6 +1,6 @@
 // PersonelPopup.js
 
-import React, { useState ,useEffect } from 'react';
+import React, { useState ,useEffect , useRef } from 'react';
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme, Grid } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -25,8 +25,13 @@ import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import { useDocument, useAllVeri } from '../../hooks/useCollection'
 import { useAuthContext } from '../../hooks/useAuthContext'
-import PersonelPopup2 from './PersonelPopup2';
+import ResimEdit from './ResimEdit';
 import { alpha, styled } from '@mui/material/styles';
+import ReactCropper from 'react-cropper';
+import 'cropperjs/dist/cropper.css';
+
+
+
 //https://github.com/junkboy0315/react-compare-image/blob/master/README.md
 function PersonelPopup({ open, onClose }) {
   const { errorr, isPendingg, signup, setDegerSingup } = useSignup();
@@ -56,15 +61,7 @@ function PersonelPopup({ open, onClose }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { isPending, error, documents } = useCollection('user');
-
-  const dialogElement = document.querySelector('.dialogElement');
-
-  if (dialogElement) {
-    dialogElement.style.width = '100%'; /* Sayfayı yatayda %80 doldurmak için */
-    dialogElement.style.maxWidth = 'none'; /* "maxWidth" sınırlamasını kaldır */
-    dialogElement.style.margin = '0 auto'; /* Dikey hizalamayı merkeze al */
-    dialogElement.style.padding = '0 10%'; /* Sağdan ve soldan %10'lık boşluk bırakmak için */
-  }
+  const [resimEditOpen, setResimEditOpen] = useState(false);
 
 
 
@@ -77,8 +74,8 @@ function PersonelPopup({ open, onClose }) {
   const [selectedItemId, setSelectedItemId] = useState('');
   const [selectedItem, setSelectedItem] = useState('');
  
-  const [licenseType, setLicenseType] = useState('');
-  const [phone, setPhone] = useState('');
+  const [onChangeVeri, setOnChangeVeri] = useState('');
+  const [resimEditKonum, setResimEditKonum] = useState('');
   const [profilePhotoOn, setProfilePhotoOn] = useState(""); // Profil fotoğrafını dosya olarak saklamak için
   const [profilePhotoArka, setProfilePhotoArka] = useState(""); // Profil fotoğrafını dosya olarak saklamak için
 
@@ -99,24 +96,10 @@ console.log("formData",formData)
   const [newUserData, setNewUserData] = useState();
 
 
+
+ 
+
 ////////////////////////////////
-  const handleImageUploadOn = (e) => {
-    e.preventDefault();
-    let files;
-    if (e.dataTransfer) {
-      files = e.dataTransfer.files;
-    } else if (e.target) {
-      files = e.target.files;
-    }
-    if (files.length === 0) {
-      return alert("Please select a file.");
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      getUploadedFile(reader.result);
-    };
-    reader.readAsDataURL(files[0]);
-  };
 
 
 /////////////////////////
@@ -129,6 +112,27 @@ console.log("formData",formData)
     const url = URL.createObjectURL(file);
     setProfilePhotoArkaUrl(url);
   };
+
+  const veriVeKonumGuncelle = (veriURL, konum) => {
+    if(konum == "on"){
+      setProfilePhotoOnUrl(veriURL);
+     }
+     if(konum == "arka"){
+      setProfilePhotoArkaUrl(veriURL);
+     }
+  };
+  const handleImageUpload = (e) => {
+    setResimEditKonum("on")
+    setOnChangeVeri(e)
+    setResimEditOpen(true)
+
+
+
+
+    // dataURL'i kullanarak veritabanına veya başka bir yere yükleme işlemini gerçekleştirin
+  };
+
+
 
 
 
@@ -318,19 +322,24 @@ const RedditTextField = styled((props) => (
   return (
 
 
+    
+    
     <Dialog
       fullWidth={fullWidth}
       maxWidth={maxWidth}
       open={open}
       onClose={handleClose}
     >
+      
+
       <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
       <DialogContent>
         <DialogContentText>
+          <ResimEdit  open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={veriVeKonumGuncelle} />
           Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.
         </DialogContentText>
         <Grid container spacing={2}>
-          <Grid item >
+          <Grid item xs={selectedItemId ? (3): (12)}>
             <div style={{
               width: '100%',
               height: '100%',
@@ -354,7 +363,7 @@ const RedditTextField = styled((props) => (
           {selectedItemId ? (
             <>
             
-              <Grid item xs={5} >
+             <Grid item xs={5} >
                 <Grid container spacing={2}>
 
                   <Grid item xs={12} md={6} >
@@ -455,6 +464,8 @@ const RedditTextField = styled((props) => (
 
                 </Grid>
               </Grid>
+
+
               <Grid item xs={4} >
                 <Grid container spacing={0}>
 
@@ -497,8 +508,7 @@ const RedditTextField = styled((props) => (
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={handleImageUploadOn}
-
+                        onChange={handleImageUpload}
                         style={{ display: 'none' }}
                         id="profile-photo-input-1"
                       />
@@ -526,10 +536,7 @@ const RedditTextField = styled((props) => (
                     </Grid>
                   </Grid>
 
-
-
-
-
+                  
 
 
                 </Grid>
@@ -556,3 +563,4 @@ const RedditTextField = styled((props) => (
 }
 
 export default PersonelPopup;
+
