@@ -5,7 +5,7 @@ import { doc, onSnapshot , collection, getDocs } from 'firebase/firestore';
 export const useDocument = (koleksiyon, id) => {
     const [document, setDocument] = useState(null);
     const [error, setError] = useState(null);
-
+    
     useEffect(() => {
         const docRef = doc(db, koleksiyon, id);
 

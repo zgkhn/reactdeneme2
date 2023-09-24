@@ -19,38 +19,16 @@ import { tokens } from "../../theme";
 import ReactCompareImage from 'react-compare-image';
 import on from '../../data/img/ehliyeton.png';
 import arka from '../../data/img/ehliyetarka.png';
-import onn from '../../data/img/ehliyeton.png';
-import arkaa from '../../data/img/ehliyetarka.png';
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import { useDocument, useAllVeri } from '../../hooks/useCollection'
 import { useAuthContext } from '../../hooks/useAuthContext'
-import PersonelPopup2 from './PersonelPopup2';
-import { alpha, styled } from '@mui/material/styles';
-//https://github.com/junkboy0315/react-compare-image/blob/master/README.md
+
 function PersonelPopup({ open, onClose }) {
   const { errorr, isPendingg, signup, setDegerSingup } = useSignup();
   const fullWidth = false;
   const { user } = useAuthContext();
-  const CssTextField = styled(TextField)({
-    '& label.Mui-focused': {
-      color: '#A0AAB4',
-    },
-    '& .MuiInput-underline:after': {
-      borderBottomColor: '#B2BAC2',
-    },
-    '& .MuiOutlinedInput-root': {
-      '& fieldset': {
-        borderColor: '#E0E3E7',
-      },
-      '&:hover fieldset': {
-        borderColor: '#B2BAC2',
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: '#6F7E8C',
-      },
-    },
-  });
+
 
   const [maxWidth, setMaxWidth] = React.useState('xl');
   const theme = useTheme();
@@ -76,20 +54,10 @@ function PersonelPopup({ open, onClose }) {
   const currentDate = new Date();
   const [selectedItemId, setSelectedItemId] = useState('');
   const [selectedItem, setSelectedItem] = useState('');
- 
+
   const [licenseType, setLicenseType] = useState('');
   const [phone, setPhone] = useState('');
-  const [profilePhotoOn, setProfilePhotoOn] = useState(""); // Profil fotoğrafını dosya olarak saklamak için
-  const [profilePhotoArka, setProfilePhotoArka] = useState(""); // Profil fotoğrafını dosya olarak saklamak için
-
-  const [formData, setFormData] = useState('');
-  const [profilePhotoOnUrl, setProfilePhotoOnUrl] = useState(null);
-  const [profilePhotoArkaUrl, setProfilePhotoArkaUrl] = useState(null);
-
-
-console.log("profilePhotoOn",profilePhotoOn)
-console.log("profilePhotoArka",profilePhotoArka)
-console.log("formData",formData)
+  const [profilePhoto, setProfilePhoto] = useState(null); // Profil fotoğrafını dosya olarak saklamak için
   const [description, setDescription] = useState('');
   const [adError, setAdError] = useState(false);
   const [telError, setTelError] = useState(false);
@@ -98,48 +66,15 @@ console.log("formData",formData)
   const [emailError, setEmailError] = useState(false);
   const [newUserData, setNewUserData] = useState();
 
-
-////////////////////////////////
-  const handleImageUploadOn = (e) => {
-    e.preventDefault();
-    let files;
-    if (e.dataTransfer) {
-      files = e.dataTransfer.files;
-    } else if (e.target) {
-      files = e.target.files;
-    }
-    if (files.length === 0) {
-      return alert("Please select a file.");
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      getUploadedFile(reader.result);
-    };
-    reader.readAsDataURL(files[0]);
-  };
-
-
-/////////////////////////
-
-  const handleImageUploadArka = (e) => {
-    const file = e.target.files[0];
-    setProfilePhotoArka(file);
-
-    // Generate the object URL for preview
-    const url = URL.createObjectURL(file);
-    setProfilePhotoArkaUrl(url);
-  };
-
-
-
   const handleClose = () => {
     // Popup'ı kapatmak için onClose callback'ini çağır
     onClose();
     setSelectedItemId("")
   };
+  console.log("deneme", selectedItemId)
   const handleUserDataChange = (field, value) => {
 
-    setSelectedItem((prevData) => ({
+    setNewUserData((prevData) => ({
       ...prevData,
       [field]: value,
     }));
@@ -284,36 +219,10 @@ console.log("formData",formData)
 
  useEffect(() => {
 
-  setEmailDefaultValue(selectedItem.email || ''); // Use selectedItem.email if it exists, otherwise use an empty string
-  setProfilePhotoOn(null)
-  setProfilePhotoArka(null)
+  setEmailDefaultValue(selectedItem || ''); // Use selectedItem.email if it exists, otherwise use an empty string
+
 
 }, [selectedItemId]);
-
-const RedditTextField = styled((props) => (
-  <TextField InputProps={{ disableUnderline: true }} {...props} />
-))(({ theme }) => ({
-  '& .MuiFilledInput-root': {
-    overflow: 'hidden',
-    borderRadius: 4,
-    backgroundColor:'#F3F6F9',
-    border: '1px solid',
-    borderColor:  '#2D3843',
-    transition: theme.transitions.create([
-      'border-color',
-      'background-color',
-      'box-shadow',
-    ]),
-    '&:hover': {
-      backgroundColor: 'transparent',
-    },
-    '&.Mui-focused': {
-      backgroundColor: 'transparent',
-      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
-      borderColor: theme.palette.primary.main,
-    },
-  },
-}));
 
   return (
 
@@ -358,15 +267,13 @@ const RedditTextField = styled((props) => (
                 <Grid container spacing={2}>
 
                   <Grid item xs={12} md={6} >
-                    <RedditTextField
-                   
-                
+                    <TextField
                       autoFocus
                       margin="dense"
                       label="E-posta"
                       type="email"
                       fullWidth
-                      value={selectedItem.email}
+                      defaultValue={emailDefaultValue.email}
                       onChange={(e) => handleUserDataChange('email', e.target.value)}
                       error={emailError}
                       helperText={emailError ? 'Geçersiz e-posta adresi.' : ''}
@@ -469,16 +376,8 @@ const RedditTextField = styled((props) => (
                     <Grid container spacing={5}>
                       <Grid item xs={12} md={12} >
 
-
-
-       
-
-
-                      <ReactCompareImage
-            leftImage={profilePhotoOnUrl ? profilePhotoOnUrl : on}
-            rightImage={profilePhotoArkaUrl ? profilePhotoArkaUrl : arka}
-            hover
-          />
+                        <ReactCompareImage leftImage={on} rightImage={arka} hover
+                        />
 
 
                       </Grid>
@@ -497,8 +396,7 @@ const RedditTextField = styled((props) => (
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={handleImageUploadOn}
-
+                        onChange={(e) => setProfilePhoto(e.target.files[0])}
                         style={{ display: 'none' }}
                         id="profile-photo-input-1"
                       />
@@ -513,8 +411,7 @@ const RedditTextField = styled((props) => (
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={handleImageUploadArka}
-
+                        onChange={(e) => setProfilePhoto(e.target.files[1])}
                         style={{ display: 'none' }}
                         id="profile-photo-input-2"
                       />
