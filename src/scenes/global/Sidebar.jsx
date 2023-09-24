@@ -44,7 +44,6 @@ const Sidebar = () => {
   const { documents: menuItems, error: errore } = useAllVeri("sidebar");
 
 
-  console.log("menuItems : ", menuItems)
 
 
   const theme = useTheme();

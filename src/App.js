@@ -50,7 +50,6 @@ function App() {
 
  
 
-console.log(user)
   useEffect(() => {
     if (authIsReady) { // Değişiklik 2: Kullanıcı oturumu durumu hazır olduğunda kontrol yapılacak
       setLoading(false);

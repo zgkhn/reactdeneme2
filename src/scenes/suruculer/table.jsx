@@ -115,7 +115,12 @@ function Tablee({ data, columns }) {
     doc.save('tablo-verileri.pdf');
   };
  
+  const dialogElement = document.querySelector('.custom-popup');
 
+  if (dialogElement) {
+    dialogElement.style.width = '800xp'; /* Sayfayı yatayda %80 doldurmak için */
+ 
+  }
   // Hata durumunu ele al
   if (error) {
     return <p>Hata oluştu: {error.message}</p>;
@@ -127,7 +132,7 @@ function Tablee({ data, columns }) {
     return (
 
       <div>
-        <PersonelPopup open={openDialog} onClose={() => setOpenDialog(false)} />
+<PersonelPopup  open={openDialog} onClose={() => setOpenDialog(false)} />
   
      <div align="center">
       
@@ -150,7 +155,7 @@ function Tablee({ data, columns }) {
               
   
                 style={theme.palette.mode === "dark" ? (
-                  {  backgroundColor: '#1F2A40', textAlign: 'left'}          ) : (
+                  {  backgroundColor:colors.primary[450], textAlign: 'left'}          ) : (
                     {  backgroundColor: '#F2F0F0', textAlign: 'left'} 
                             )}
   
