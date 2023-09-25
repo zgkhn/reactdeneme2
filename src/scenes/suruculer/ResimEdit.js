@@ -26,7 +26,12 @@ import ReactCropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import ReactCompareImage from 'react-compare-image';
 
-function ResimEdit({ open, onClose ,veri,konum }) {
+
+
+
+
+
+function ResimEdit({ open, onClose, veri, konum, onChange }) {
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -42,6 +47,10 @@ function ResimEdit({ open, onClose ,veri,konum }) {
   const cropperRef = useRef(null);
   const [veriURL, setDataURL] = useState('');
 
+
+
+
+  
   const aspectRatio = 16 / 9; // Örneğin, 16:9 en-boy oranı
 
   if (veri) {
@@ -76,12 +85,16 @@ function ResimEdit({ open, onClose ,veri,konum }) {
       if (croppedCanvas) {
         // Kırpılan resmin URL'sini al
         const dataURL = croppedCanvas.toDataURL();
-        setDataURL(dataURL)
-        // URL'yi handleImageUploadOn işlevine geçir
-        // handleImageUploadOn(dataURL);
+        setDataURL(dataURL);
+        const data = JSON.stringify({ imageData: croppedCanvas.toDataURL() });
+
+        // onChange işlevini çağırarak veriURL ve konum bilgilerini üst düzey bileşene iletebilirsiniz
+        onChange(dataURL, konum,croppedCanvas);
       }
-      setImage(defaultSrc);
     }
+
+    // Popup'ı kapatmak için gerekli kodlar
+    handleClose();
   };
 
   return (
@@ -91,25 +104,28 @@ function ResimEdit({ open, onClose ,veri,konum }) {
       onClose={handleClose}
     >
 
-      <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
+      <DialogTitle>Ehliyet Resmi Yükleme Alanı</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.
-        </DialogContentText>
+        Lütfen Ehliyetin {konum === "on" ? "Ön" : "Arka"} Kısmını Seçerek Kaydet Butonuna Basınız        </DialogContentText>
         <Grid container spacing={2}>
+        <Grid item xs={12}  >
 
+        </Grid>
+        <Grid item xs={12}  >
           <ReactCropper
             aspectRatio={aspectRatio}
             ref={cropperRef}
             src={image}
             style={{ width: '100%' }}
           // Diğer özelleştirmeleri buraya ekleyebilirsiniz
-          />
+          />     </Grid>
+
           </Grid>
 
       </DialogContent>
       <DialogActions>
-        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
+        <Button onClick={handleClose} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
           İptal</Button>
 
         <Button onClick={getCropData} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
@@ -120,4 +136,4 @@ function ResimEdit({ open, onClose ,veri,konum }) {
   );
 }
 
-export default ResimEdit();
+export default ResimEdit;

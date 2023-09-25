@@ -11,16 +11,16 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import moment from "moment";
 import 'moment/locale/tr'
-import { auth, db } from "../../firebase/config"; // Firebase yapılandırması
-import { doc, updateDoc } from 'firebase/firestore'
+import { auth, db ,firebaseTimestamp ,storage, } from "../../firebase/config"; // Firebase yapılandırması
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useCollection } from '../../hooks/useallCollection'
 import { useSignup } from '../../hooks/useSignupNew';
 import { tokens } from "../../theme";
 import ReactCompareImage from 'react-compare-image';
-import on from '../../data/img/ehliyeton.png';
-import arka from '../../data/img/ehliyetarka.png';
-import onn from '../../data/img/ehliyeton.png';
-import arkaa from '../../data/img/ehliyetarka.png';
+import on from '../../data/img/ehliyeton.jpg';
+import arka from '../../data/img/ehliyetarka.jpg';
+import { useAddSurucu } from "../../hooks/useAddSurucu";
+
 import LinearProgress from '@mui/material/LinearProgress';
 import Box from '@mui/material/Box';
 import { useDocument, useAllVeri } from '../../hooks/useCollection'
@@ -34,6 +34,9 @@ import 'cropperjs/dist/cropper.css';
 
 //https://github.com/junkboy0315/react-compare-image/blob/master/README.md
 function PersonelPopup({ open, onClose }) {
+
+  const { profilError, addSurucu, } = useAddSurucu();
+
   const { errorr, isPendingg, signup, setDegerSingup } = useSignup();
   const fullWidth = false;
   const { user } = useAuthContext();
@@ -62,11 +65,11 @@ function PersonelPopup({ open, onClose }) {
   const colors = tokens(theme.palette.mode);
   const { isPending, error, documents } = useCollection('user');
   const [resimEditOpen, setResimEditOpen] = useState(false);
+  const [formattedDate, setFormattedDate] = useState('');
 
 
-
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const [onResim, setOnResim] = useState('');
+  const [arkaResim, setArkaResim] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [licenseRenewalDate, setLicenseRenewalDate] = useState('');
@@ -84,9 +87,7 @@ function PersonelPopup({ open, onClose }) {
   const [profilePhotoArkaUrl, setProfilePhotoArkaUrl] = useState(null);
 
 
-console.log("profilePhotoOn",profilePhotoOn)
-console.log("profilePhotoArka",profilePhotoArka)
-console.log("formData",formData)
+
   const [description, setDescription] = useState('');
   const [adError, setAdError] = useState(false);
   const [telError, setTelError] = useState(false);
@@ -101,26 +102,44 @@ console.log("formData",formData)
 
 ////////////////////////////////
 
+const handleSubmit = () => {
 
+ 
+  if ( !telError && !adError ) {
+
+    addSurucu(selectedItem, profilePhotoOn, profilePhotoArka);
+
+  } else {
+
+  }
+
+};
 /////////////////////////
 
   const handleImageUploadArka = (e) => {
-    const file = e.target.files[0];
-    setProfilePhotoArka(file);
+    setResimEditKonum("arka")
+    setOnChangeVeri(e)
+    setResimEditOpen(true)
 
-    // Generate the object URL for preview
-    const url = URL.createObjectURL(file);
-    setProfilePhotoArkaUrl(url);
   };
 
-  const veriVeKonumGuncelle = (veriURL, konum) => {
+  const handleResimEditKaydet  = (veriURL, konum,data) => {
+  
+    setOnChangeVeri("")
+
     if(konum == "on"){
       setProfilePhotoOnUrl(veriURL);
+      setProfilePhotoOn(data);
+
      }
      if(konum == "arka"){
       setProfilePhotoArkaUrl(veriURL);
+      setProfilePhotoArka(data);
+
      }
+
   };
+
   const handleImageUpload = (e) => {
     setResimEditKonum("on")
     setOnChangeVeri(e)
@@ -140,13 +159,27 @@ console.log("formData",formData)
     // Popup'ı kapatmak için onClose callback'ini çağır
     onClose();
     setSelectedItemId("")
+    setProfilePhotoArka("");
+    setProfilePhotoOn("");
+
   };
   const handleUserDataChange = (field, value) => {
 
-    setSelectedItem((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
+    if (field === 'eyt') {
+      // Eğer değiştirilen alan 'eyt' ise, değeri Firestore Timestamp nesnesine dönüştür
+      const eytTimestamp = firebaseTimestamp.fromDate(new Date(value)); // value bir tarih dizesi olmalı
+  
+      setSelectedItem((prevData) => ({
+        ...prevData,
+        [field]: eytTimestamp,
+      }));
+    } else {
+      // Diğer alanlar için doğrudan değeri kaydet
+      setSelectedItem((prevData) => ({
+        ...prevData,
+        [field]: value,
+      }));
+    }
 
 
     if (field === 'ad') {
@@ -228,6 +261,27 @@ console.log("formData",formData)
 
   };
 
+  useEffect(() => {
+    if (selectedItem.eyt instanceof firebaseTimestamp) {
+      // Firebase Timestamp'i milisaniye cinsinden zaman damgasına dönüştür
+      const timestampMillis = selectedItem.eyt.toMillis();
+
+      // Zaman damgasını kullanarak JavaScript tarih nesnesi oluştur
+      const jsDate = new Date(timestampMillis);
+
+      // JavaScript tarih nesnesini istediğiniz formatta formatla
+      const formattedDate = moment(jsDate).format('YYYY-MM-DD');
+
+      // Formatlanmış tarihi state'e kaydet
+      setFormattedDate(formattedDate);
+    } else {
+
+      setFormattedDate("");
+    }
+
+    console.log("selectedItem.eyt : ",selectedItem.ehliyetOnFoto )
+  }, [selectedItem]);
+
 
   // Filtreleme işlemi
   const filteredDocuments = documents.filter((documents) => {
@@ -283,16 +337,63 @@ console.log("formData",formData)
 
 
  const [emailDefaultValue, setEmailDefaultValue] = useState('');
- console.log("log : ",selectedItem )
- console.log("log1 : ",emailDefaultValue )
+console.log("profilePhotoOn",profilePhotoOn)
+
+
+
 
  useEffect(() => {
 
   setEmailDefaultValue(selectedItem.email || ''); // Use selectedItem.email if it exists, otherwise use an empty string
-  setProfilePhotoOn(null)
-  setProfilePhotoArka(null)
+  setProfilePhotoOnUrl(null)
+  setProfilePhotoArkaUrl(null)
+  setProfilePhotoArka("");
+  setProfilePhotoOn("");
+  setOnChangeVeri("")
+if (selectedItem.ehliyetOnFoto){
+  const storageRef = ref(storage, selectedItem.ehliyetOnFoto);
+
+  storageRef.getDownloadURL()
+  .then((url) => {
+    // URL'i kullanabilirsiniz
+    console.log('Erişilebilir URL:', url);
+    setOnResim(url)
+  })
+  .catch((error) => {
+    console.error('Hata:', error);
+  });
+}else{
+  setOnResim("")
+}
+
+
+
+if (selectedItem.ehliyetArkaFoto){
+
+  const storageReff = ref(storage, selectedItem.ehliyetArkaFoto);
+
+  storageReff.getDownloadURL()
+  .then((url) => {
+    // URL'i kullanabilirsiniz
+    console.log('Erişilebilir URL:', url);
+    setArkaResim(url)
+  })
+  .catch((error) => {
+    console.error('Hata:', error);
+  });
+}else{
+  setArkaResim("")
+}
+
 
 }, [selectedItemId]);
+
+
+
+
+
+
+
 
 const RedditTextField = styled((props) => (
   <TextField InputProps={{ disableUnderline: true }} {...props} />
@@ -335,7 +436,7 @@ const RedditTextField = styled((props) => (
       <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          <ResimEdit  open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={veriVeKonumGuncelle} />
+          <ResimEdit  open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={handleResimEditKaydet} />
           Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.
         </DialogContentText>
         <Grid container spacing={2}>
@@ -376,9 +477,9 @@ const RedditTextField = styled((props) => (
                       type="email"
                       fullWidth
                       value={selectedItem.email}
-                      onChange={(e) => handleUserDataChange('email', e.target.value)}
                       error={emailError}
                       helperText={emailError ? 'Geçersiz e-posta adresi.' : ''}
+                      disabled
                     />
                   </Grid>
 
@@ -387,30 +488,33 @@ const RedditTextField = styled((props) => (
                       margin="dense"
                       label="Adı Soyadı"
                       fullWidth
-                      onChange={(e) => handleUserDataChange('ad', e.target.value)}
-                      error={adError}
+                      value={selectedItem.ad}
+                      onChange={(e) => handleUserDataChange('ad', e.target.value)}                     
+                       error={adError}
                       helperText={adError ? 'Geçersiz ad' : ''}
                     />
                   </Grid>
 
                   <Grid item xs={12} md={6} >
-                    <TextField
-                      margin="dense"
-                      label="Ehliyet Yenileme Tarihi"
-                      type="date"
-                      fullWidth
-                      defaultValue={moment(oneDayAgo).format("YYYY-MM-DD")}
-                      onChange={(e) => handleUserDataChange('tarih', e.target.value)}
-                      error={tarihError}
-                      helperText={tarihError ? 'Geçersiz tarih' : ''}
-                    />
+                  <TextField
+      margin="dense"
+      label="Ehliyet Yenileme Tarihi"
+      type="date"
+      fullWidth
+      value={formattedDate}
+      onChange={(e) => handleUserDataChange('eyt', e.target.value)}
+      error={tarihError}
+      helperText={tarihError ? 'Geçersiz tarih' : ''}
+    />
+
                   </Grid>
                   <Grid item xs={12} md={6} >
                     <TextField
                       margin="dense"
                       label="Ehliyet Türü"
                       fullWidth
-                      onChange={(e) => handleUserDataChange('ehliyet', e.target.value)}
+                      value={selectedItem.ebilgi}
+                      onChange={(e) => handleUserDataChange('ebilgi', e.target.value)}                         
                       error={ehliyetError}
                       helperText={ehliyetError ? 'Ehliyet türü boş olamaz' : ''}
                     />
@@ -422,6 +526,8 @@ const RedditTextField = styled((props) => (
                       margin="dense"
                       label="Telefon"
                       fullWidth
+                      value={selectedItem.tel}
+
                       onChange={(e) => handleUserDataChange('tel', e.target.value)}
                       error={telError}
                       helperText={telError ? 'Geçersiz telefon numarası' : ''}
@@ -432,7 +538,8 @@ const RedditTextField = styled((props) => (
                       margin="dense"
                       label="Departman"
                       fullWidth
-                      onChange={(e) => handleUserDataChange('ad', e.target.value)}
+                      value={selectedItem.departman}
+                      onChange={(e) => handleUserDataChange('departman', e.target.value)}
                       error={adError}
                       helperText={adError ? 'Geçersiz ad' : ''}
                     />
@@ -442,11 +549,13 @@ const RedditTextField = styled((props) => (
                   <Grid item xs={12} md={12} >
                     <TextField
                       margin="dense"
-                      label="Açıklama"
+                      label="Adres"
                       fullWidth
+                      value={selectedItem.adres}
+
                       multiline
-                      rows={2}
-                      onChange={(e) => handleUserDataChange('bilgi', e.target.value)}
+                      rows={1}
+                      onChange={(e) => handleUserDataChange('adres', e.target.value)}
                     />
                   </Grid>
 
@@ -457,6 +566,7 @@ const RedditTextField = styled((props) => (
                       label="Açıklama"
                       fullWidth
                       multiline
+                      value={selectedItem.bilgi}
                       rows={2}
                       onChange={(e) => handleUserDataChange('bilgi', e.target.value)}
                     />
@@ -486,10 +596,22 @@ const RedditTextField = styled((props) => (
 
 
                       <ReactCompareImage
-            leftImage={profilePhotoOnUrl ? profilePhotoOnUrl : on}
-            rightImage={profilePhotoArkaUrl ? profilePhotoArkaUrl : arka}
-            hover
+            leftImage={profilePhotoOnUrl ? (
+              profilePhotoOnUrl) : onResim ? (
+                onResim
+              ) : (
+                on)}
+              
+            rightImage={profilePhotoArkaUrl ? (
+              profilePhotoArkaUrl) : arkaResim ? (
+                arkaResim
+              ) : (
+                on)}
+            sliderLineColor={colors.primary[400]}
           />
+
+
+
 
 
                       </Grid>
@@ -550,10 +672,10 @@ const RedditTextField = styled((props) => (
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
+        <Button onClick={handleClose} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
           İptal</Button>
 
-        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
+        <Button onClick={handleSubmit}  style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
           Kaydet
         </Button>
       </DialogActions>

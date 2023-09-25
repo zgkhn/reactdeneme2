@@ -1,6 +1,6 @@
 import { initializeApp } from "../../node_modules/firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, Timestamp as FirestoreTimestamp } from "firebase/firestore"; // Firestore'daki Timestamp'ı başka bir isimle içe aktar
 import { getStorage } from 'firebase/storage';
 
 
@@ -13,9 +13,10 @@ const firebaseConfig = {
   appId: "1:379191111900:web:a01b95c6daacfaccf70419"
 };
 
+
+
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
-
-export const auth=getAuth(app)
-
-export const db=getFirestore(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const firebaseTimestamp  = FirestoreTimestamp; // Firestore'daki Timestamp'ı dışa aktar
