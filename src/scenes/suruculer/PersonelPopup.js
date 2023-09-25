@@ -1,6 +1,6 @@
 // PersonelPopup.js
 
-import React, { useState ,useEffect , useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme, Grid } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -11,8 +11,9 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import moment from "moment";
 import 'moment/locale/tr'
-import { auth, db ,firebaseTimestamp ,storage, } from "../../firebase/config"; // Firebase yapılandırması
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, db, firebaseTimestamp, storage, } from "../../firebase/config"; // Firebase yapılandırması
+import { getStorage, getDownloadURL , ref } from 'firebase/storage';
+
 import { useCollection } from '../../hooks/useallCollection'
 import { useSignup } from '../../hooks/useSignupNew';
 import { tokens } from "../../theme";
@@ -66,6 +67,7 @@ function PersonelPopup({ open, onClose }) {
   const { isPending, error, documents } = useCollection('user');
   const [resimEditOpen, setResimEditOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
+  const storage = getStorage();
 
 
   const [onResim, setOnResim] = useState('');
@@ -76,7 +78,7 @@ function PersonelPopup({ open, onClose }) {
   const currentDate = new Date();
   const [selectedItemId, setSelectedItemId] = useState('');
   const [selectedItem, setSelectedItem] = useState('');
- 
+
   const [onChangeVeri, setOnChangeVeri] = useState('');
   const [resimEditKonum, setResimEditKonum] = useState('');
   const [profilePhotoOn, setProfilePhotoOn] = useState(""); // Profil fotoğrafını dosya olarak saklamak için
@@ -98,23 +100,23 @@ function PersonelPopup({ open, onClose }) {
 
 
 
- 
 
-////////////////////////////////
 
-const handleSubmit = () => {
+  ////////////////////////////////
 
- 
-  if ( !telError && !adError ) {
+  const handleSubmit = () => {
 
-    addSurucu(selectedItem, profilePhotoOn, profilePhotoArka);
 
-  } else {
+    if (!telError && !adError) {
 
-  }
+      addSurucu(selectedItem, profilePhotoOn, profilePhotoArka);
 
-};
-/////////////////////////
+    } else {
+
+    }
+
+  };
+  /////////////////////////
 
   const handleImageUploadArka = (e) => {
     setResimEditKonum("arka")
@@ -123,20 +125,20 @@ const handleSubmit = () => {
 
   };
 
-  const handleResimEditKaydet  = (veriURL, konum,data) => {
-  
+  const handleResimEditKaydet = (veriURL, konum, data) => {
+
     setOnChangeVeri("")
 
-    if(konum == "on"){
+    if (konum == "on") {
       setProfilePhotoOnUrl(veriURL);
       setProfilePhotoOn(data);
 
-     }
-     if(konum == "arka"){
+    }
+    if (konum == "arka") {
       setProfilePhotoArkaUrl(veriURL);
       setProfilePhotoArka(data);
 
-     }
+    }
 
   };
 
@@ -168,7 +170,7 @@ const handleSubmit = () => {
     if (field === 'eyt') {
       // Eğer değiştirilen alan 'eyt' ise, değeri Firestore Timestamp nesnesine dönüştür
       const eytTimestamp = firebaseTimestamp.fromDate(new Date(value)); // value bir tarih dizesi olmalı
-  
+
       setSelectedItem((prevData) => ({
         ...prevData,
         [field]: eytTimestamp,
@@ -279,7 +281,7 @@ const handleSubmit = () => {
       setFormattedDate("");
     }
 
-    console.log("selectedItem.eyt : ",selectedItem.ehliyetOnFoto )
+    console.log("selectedItem.eyt : ", selectedItem.ehliyetOnFoto)
   }, [selectedItem]);
 
 
@@ -336,57 +338,26 @@ const handleSubmit = () => {
   };
 
 
- const [emailDefaultValue, setEmailDefaultValue] = useState('');
-console.log("profilePhotoOn",profilePhotoOn)
+  const [emailDefaultValue, setEmailDefaultValue] = useState('');
+  console.log("profilePhotoOn", profilePhotoOn)
 
 
 
 
- useEffect(() => {
+  useEffect(() => {
 
-  setEmailDefaultValue(selectedItem.email || ''); // Use selectedItem.email if it exists, otherwise use an empty string
-  setProfilePhotoOnUrl(null)
-  setProfilePhotoArkaUrl(null)
-  setProfilePhotoArka("");
-  setProfilePhotoOn("");
-  setOnChangeVeri("")
-if (selectedItem.ehliyetOnFoto){
-  const storageRef = ref(storage, selectedItem.ehliyetOnFoto);
-
-  storageRef.getDownloadURL()
-  .then((url) => {
-    // URL'i kullanabilirsiniz
-    console.log('Erişilebilir URL:', url);
-    setOnResim(url)
-  })
-  .catch((error) => {
-    console.error('Hata:', error);
-  });
-}else{
-  setOnResim("")
-}
+    setEmailDefaultValue(selectedItem.email || ''); // Use selectedItem.email if it exists, otherwise use an empty string
+    setProfilePhotoOnUrl(null)
+    setProfilePhotoArkaUrl(null)
+    setProfilePhotoArka("");
+    setProfilePhotoOn("");
+    setOnChangeVeri("")
 
 
-
-if (selectedItem.ehliyetArkaFoto){
-
-  const storageReff = ref(storage, selectedItem.ehliyetArkaFoto);
-
-  storageReff.getDownloadURL()
-  .then((url) => {
-    // URL'i kullanabilirsiniz
-    console.log('Erişilebilir URL:', url);
-    setArkaResim(url)
-  })
-  .catch((error) => {
-    console.error('Hata:', error);
-  });
-}else{
-  setArkaResim("")
-}
+    
 
 
-}, [selectedItemId]);
+  }, [selectedItemId]);
 
 
 
@@ -395,52 +366,52 @@ if (selectedItem.ehliyetArkaFoto){
 
 
 
-const RedditTextField = styled((props) => (
-  <TextField InputProps={{ disableUnderline: true }} {...props} />
-))(({ theme }) => ({
-  '& .MuiFilledInput-root': {
-    overflow: 'hidden',
-    borderRadius: 4,
-    backgroundColor:'#F3F6F9',
-    border: '1px solid',
-    borderColor:  '#2D3843',
-    transition: theme.transitions.create([
-      'border-color',
-      'background-color',
-      'box-shadow',
-    ]),
-    '&:hover': {
-      backgroundColor: 'transparent',
+  const RedditTextField = styled((props) => (
+    <TextField {...props} />
+  ))(({ theme }) => ({
+    '& .MuiFilledInput-root': {
+      overflow: 'hidden',
+      borderRadius: 4,
+      backgroundColor: '#F3F6F9',
+      border: '1px solid',
+      borderColor: '#2D3843',
+      transition: theme.transitions.create([
+        'border-color',
+        'background-color',
+        'box-shadow',
+      ]),
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
+      '&.Mui-focused': {
+        backgroundColor: 'transparent',
+        boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
+        borderColor: theme.palette.primary.main,
+      },
     },
-    '&.Mui-focused': {
-      backgroundColor: 'transparent',
-      boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 2px`,
-      borderColor: theme.palette.primary.main,
-    },
-  },
-}));
+  }));
 
   return (
 
 
-    
-    
+
+
     <Dialog
       fullWidth={fullWidth}
       maxWidth={maxWidth}
       open={open}
       onClose={handleClose}
     >
-      
+
 
       <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          <ResimEdit  open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={handleResimEditKaydet} />
+          <ResimEdit open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={handleResimEditKaydet} />
           Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.
         </DialogContentText>
         <Grid container spacing={2}>
-          <Grid item xs={selectedItemId ? (3): (12)}>
+          <Grid item xs={selectedItemId ? (3) : (12)}>
             <div style={{
               width: '100%',
               height: '100%',
@@ -463,14 +434,14 @@ const RedditTextField = styled((props) => (
           </Grid>
           {selectedItemId ? (
             <>
-            
-             <Grid item xs={5} >
+
+              <Grid item xs={5} >
                 <Grid container spacing={2}>
 
                   <Grid item xs={12} md={6} >
                     <RedditTextField
-                   
-                
+
+
                       autoFocus
                       margin="dense"
                       label="E-posta"
@@ -489,23 +460,23 @@ const RedditTextField = styled((props) => (
                       label="Adı Soyadı"
                       fullWidth
                       value={selectedItem.ad}
-                      onChange={(e) => handleUserDataChange('ad', e.target.value)}                     
-                       error={adError}
+                      onChange={(e) => handleUserDataChange('ad', e.target.value)}
+                      error={adError}
                       helperText={adError ? 'Geçersiz ad' : ''}
                     />
                   </Grid>
 
                   <Grid item xs={12} md={6} >
-                  <TextField
-      margin="dense"
-      label="Ehliyet Yenileme Tarihi"
-      type="date"
-      fullWidth
-      value={formattedDate}
-      onChange={(e) => handleUserDataChange('eyt', e.target.value)}
-      error={tarihError}
-      helperText={tarihError ? 'Geçersiz tarih' : ''}
-    />
+                    <TextField
+                      margin="dense"
+                      label="Ehliyet Yenileme Tarihi"
+                      type="date"
+                      fullWidth
+                      value={formattedDate}
+                      onChange={(e) => handleUserDataChange('eyt', e.target.value)}
+                      error={tarihError}
+                      helperText={tarihError ? 'Geçersiz tarih' : ''}
+                    />
 
                   </Grid>
                   <Grid item xs={12} md={6} >
@@ -514,7 +485,7 @@ const RedditTextField = styled((props) => (
                       label="Ehliyet Türü"
                       fullWidth
                       value={selectedItem.ebilgi}
-                      onChange={(e) => handleUserDataChange('ebilgi', e.target.value)}                         
+                      onChange={(e) => handleUserDataChange('ebilgi', e.target.value)}
                       error={ehliyetError}
                       helperText={ehliyetError ? 'Ehliyet türü boş olamaz' : ''}
                     />
@@ -592,23 +563,23 @@ const RedditTextField = styled((props) => (
 
 
 
-       
 
 
-                      <ReactCompareImage
-            leftImage={profilePhotoOnUrl ? (
-              profilePhotoOnUrl) : onResim ? (
-                onResim
-              ) : (
-                on)}
-              
-            rightImage={profilePhotoArkaUrl ? (
-              profilePhotoArkaUrl) : arkaResim ? (
-                arkaResim
-              ) : (
-                on)}
-            sliderLineColor={colors.primary[400]}
-          />
+
+                        <ReactCompareImage
+                          leftImage={profilePhotoOnUrl ? (
+                            profilePhotoOnUrl) : selectedItem.ehliyetOnFoto ? (
+                              selectedItem.ehliyetOnFoto
+                            ) : (
+                            on)}
+
+                          rightImage={profilePhotoArkaUrl ? (
+                            profilePhotoArkaUrl) : selectedItem.ehliyetArkaFoto ? (
+                              selectedItem.ehliyetArkaFoto
+                            ) : (
+                            arka)}
+                          sliderLineColor={colors.primary[400]}
+                        />
 
 
 
@@ -658,7 +629,7 @@ const RedditTextField = styled((props) => (
                     </Grid>
                   </Grid>
 
-                  
+
 
 
                 </Grid>
@@ -675,7 +646,7 @@ const RedditTextField = styled((props) => (
         <Button onClick={handleClose} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
           İptal</Button>
 
-        <Button onClick={handleSubmit}  style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
+        <Button onClick={handleSubmit} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
           Kaydet
         </Button>
       </DialogActions>
