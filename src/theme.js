@@ -23,6 +23,7 @@ export const tokens = (mode) => ({
           300: "#727681",
           400: "#202124",// genel 2. renk
                     450: "#31313B", //tablo başlık
+                    460: "#009688", //tablo başlık
 
           500: "#2E2F33",
           550: "#35363a",
@@ -83,6 +84,7 @@ export const tokens = (mode) => ({
           300: "#0c101b",
           400: "#F9E8E0", // genel 2. renk
           450: "#DBC9C5", //tablo başlık
+          460: "#009688", //tablo başlık
           500: "#141b2d",
           600: "#1F2A40",
           700: "#727681",

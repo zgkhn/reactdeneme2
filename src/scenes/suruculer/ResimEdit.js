@@ -35,10 +35,14 @@ function ResimEdit({ open, onClose, veri, konum, onChange }) {
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const yenile = true; // Default image source
 
   const handleClose = () => {
     // Popup'ı kapatmak için onClose callback'ini çağır
     onClose();
+    setImage(defaultSrc)
+    onChange(null,null,null,yenile);
+
   };
 
   const defaultSrc = ''; // Default image source
