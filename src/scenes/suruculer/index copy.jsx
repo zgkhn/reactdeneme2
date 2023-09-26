@@ -8,7 +8,6 @@ import { useAuthContext } from '../../hooks/useAuthContext'
 const Form = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
   const { user } = useAuthContext();
 
   const { isPending, error, documents } = useCollection('user');
@@ -17,7 +16,11 @@ const Form = () => {
 
 const filteredDocuments = documents.filter(doc => {
   return doc.firmakod === user.displayName && doc.surucu === true;
-});console.log(documents)
+});
+
+
+
+console.log(":::::::::::",filteredDocuments) 
   const columns = [
     {
       Header: '',
@@ -29,6 +32,7 @@ const filteredDocuments = documents.filter(doc => {
       accessor: 'ad', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
      ara:true
+
     },
     {
       Header: 'Email',
@@ -36,6 +40,10 @@ const filteredDocuments = documents.filter(doc => {
       siralama:false ,
       ara:true
 
+    },{
+      Header: 'Telefon',
+      accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
+      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
 
     },
     {
@@ -46,24 +54,21 @@ const filteredDocuments = documents.filter(doc => {
     },
     {
       Header: 'Belge Türü',
-      accessor: 'ehliyet', // Gerçek veriye göre bu kısmı güncelleyin
-      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-
-    },{
-      Header: 'Email',
-      accessor: 'emadil', // Gerçek veriye göre bu kısmı güncelleyin
+      accessor: 'ebilgi', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
 
     },
     {
-      Header: 'Telefon',
-      accessor: 'tel412', // Gerçek veriye göre bu kısmı güncelleyin
+      Header: 'Departman',
+      accessor: 'departman', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
 
     },
   ];
 
-
+  // if (filteredDocuments === null) {
+  //   return <p>Veri yükleniyor...</p>;
+  // }
   return (
     <div>
       <h1>Form</h1>
@@ -81,7 +86,6 @@ const filteredDocuments = documents.filter(doc => {
             backgroundColor:colors.primary[400]          }}
 
           >
-  
       <Tablee data={filteredDocuments} columns={columns} />
       </Box></Box>
     </div>

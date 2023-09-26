@@ -533,21 +533,10 @@ function PersonelPopup({ open, onClose }) {
               <Grid item xs={4} >
                 <Grid container spacing={0}>
 
-
-
-
-
-
-
                   <Grid item xs={12} md={12} >
 
                     <Grid container spacing={5}>
                       <Grid item xs={12} md={12} >
-
-
-
-
-
 
                         <ReactCompareImage
                           leftImage={profilePhotoOnUrl ? (
@@ -564,9 +553,7 @@ function PersonelPopup({ open, onClose }) {
                         />
                       </Grid>
 
-
                     </Grid>
-
 
                   </Grid>
 
