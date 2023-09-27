@@ -31,7 +31,7 @@ import Switch from '@mui/material/Switch';
 
 
 //https://github.com/junkboy0315/react-compare-image/blob/master/README.md
-function PersonelPopup({ open, onClose }) {
+function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
 
   const { profilError, addSurucu, } = useAddSurucu();
 
@@ -78,7 +78,7 @@ function PersonelPopup({ open, onClose }) {
   const [telError, setTelError] = useState(false);
   const [ehliyetError, setEhliyetError] = useState(false);
   const [tarihError, setTarihError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
+  const [veriDeger, setVeriDeger] = useState("");
   const [newUserData, setNewUserData] = useState();
 
   const IOSSwitch = styled((props) => (
@@ -135,6 +135,7 @@ function PersonelPopup({ open, onClose }) {
   const handleSubmit = () => {
     if (!telError && !adError && !tarihError && !ehliyetError && !departmanError && selectedItem.ad && selectedItem.tel && selectedItem.eyt && selectedItem.ebilgi && selectedItem.departman) {
       addSurucu(selectedItem, profilePhotoOn, profilePhotoArka);
+      handleClose();
     } else {
       if (!selectedItem.ad) {
         setAdError(true)
@@ -186,6 +187,9 @@ function PersonelPopup({ open, onClose }) {
     setProfilePhotoArka("");
     setProfilePhotoOn("");
     setOnChangeVeri("");
+    setVeriDeger(false);
+    gelenIdDeger = false
+
   };
   const handleUserDataChange = (field, value) => {
     if (field === 'eyt') {
@@ -231,27 +235,30 @@ function PersonelPopup({ open, onClose }) {
   oneDayAgo.setDate(currentDate.getDate() - 1);
 
   useEffect(() => {
-    if (selectedItem.eyt instanceof firebaseTimestamp) {
-      // Firebase Timestamp'i milisaniye cinsinden zaman damgasına dönüştür
-      const timestampMillis = selectedItem.eyt.toMillis();
-      // Zaman damgasını kullanarak JavaScript tarih nesnesi oluştur
-      const jsDate = new Date(timestampMillis);
-      // JavaScript tari nesnesini istediğiniz formatta formatla
-      const formattedDate = moment(jsDate).format('YYYY-MM-DD');
 
-      // Formatlanmış tarihi state'e kaydet
-      setFormattedDate(formattedDate);
-    } else {
+    if (selectedItem.eyt) {
 
-      setFormattedDate("");
+      if (selectedItem.eyt instanceof firebaseTimestamp) {
+        // Firebase Timestamp'i milisaniye cinsinden zaman damgasına dönüştür
+        const timestampMillis = selectedItem.eyt.toMillis();
+        // Zaman damgasını kullanarak JavaScript tarih nesnesi oluştur
+        const jsDate = new Date(timestampMillis);
+        // JavaScript tari nesnesini istediğiniz formatta formatla
+        const formattedDate = moment(jsDate).format('YYYY-MM-DD');
+
+        // Formatlanmış tarihi state'e kaydet
+        setFormattedDate(formattedDate);
+      } else {
+
+        setFormattedDate("");
+      }
     }
-
   }, [selectedItem]);
 
 
   // Filtreleme işlemi
   const filteredDocuments = documents.filter((documents) => {
-    return documents.firmakod === user.displayName ;
+    return documents.firmakod === user.displayName;
   });
 
   const filteredListItems = filteredDocuments.map((documents) => (
@@ -288,6 +295,25 @@ function PersonelPopup({ open, onClose }) {
 
 
 
+  useEffect(() => {
+
+    if (!gelenIdDeger === false) {
+      setVeriDeger(gelenIdDeger);
+
+      setSelectedItemId(gelenIdDeger);
+      setSelectedItem("")
+      setMaxWidth("md")
+
+      const selectedItem = filteredDocuments.find((item) => item.id === gelenIdDeger);
+
+      setSelectedItem(selectedItem)
+    } else {
+
+      setSelectedItem("")
+      setSelectedItemId("")
+    }
+  }, [open]);
+
 
 
   // Tıklanan öğenin ID'sini güncelleyen işlev
@@ -295,13 +321,12 @@ function PersonelPopup({ open, onClose }) {
 
     setSelectedItemId(itemId);
     setSelectedItem("")
-
+    setMaxWidth("lg")
     const selectedItem = filteredDocuments.find((item) => item.id === itemId);
 
     setSelectedItem(selectedItem)
-
   };
-
+  console.log("selectedItem:", selectedItem)
 
   const [emailDefaultValue, setEmailDefaultValue] = useState('');
 
@@ -368,59 +393,60 @@ function PersonelPopup({ open, onClose }) {
     >
 
 
-      <DialogTitle>Yeni Sürücü Ekle</DialogTitle>
+      <DialogTitle>{gelenIdDeger === false ? ("Yeni Sürücü Ekle") : ("Sürücü Düzenle")}</DialogTitle>
       <DialogContent>
         <DialogContentText>
           <ResimEdit open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={handleResimEditKaydet} />
-          Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.
+          {gelenIdDeger === false ? (" Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.") : ("")}
+         
         </DialogContentText>
         <Grid container spacing={2}>
-          <Grid item xs={selectedItemId ? (3) : (12)}>
-            <div style={{
-              width: '100%',
-              height: '100%',
-              bgcolor: colors.primary[400],
-              position: 'relative',
-              overflow: 'auto',
-              maxHeight: '70vh'
-            }}>
+          {!gelenIdDeger === false ? ("") : (<>
+            <Grid item xs={selectedItemId ? (3) : (12)}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                bgcolor: colors.primary[400],
+                position: 'relative',
+                overflow: 'auto',
+                maxHeight: '100%'
+              }}>
 
-              <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400], }}>
-
-
-                {filteredListItems}
+                <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400], }}>
 
 
 
-              </List>
-            </div>
+                  {filteredListItems}
 
-          </Grid>
+
+
+                </List>
+              </div>
+
+            </Grid></>)}
           {selectedItemId ? (
             <>
 
-              <Grid item xs={5} >
+              <Grid item xs={gelenIdDeger === false ? (5) : (6)} >
                 <Grid container spacing={1}>
 
-                  <Grid item xs={12} md={6} container alignItems="center" justifyContent="center" align-content="center">
-                    <Grid item xs={12} md={3} container alignItems="center" justifyContent="center" align-content="center">
+                  <Grid item xs={12}  container alignItems="center" justifyContent="center" align-content="center">
 
-                    </Grid>
-                    <Grid item xs={12} md={2} container alignItems="center" justifyContent="center" align-content="center">
-                      <FormControlLabel
-                       control={<IOSSwitch checked={selectedItem.surucu || false} onChange={(e) => handleUserDataChange('surucu', e.target.checked)} />}
-
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={6} container alignItems="center" justifyContent="center" align-content="center">
-                      Sürücü Olarak Onayla.
-
-                    </Grid>
-                    <Grid item xs={12} md={1} container alignItems="center" justifyContent="center" align-content="center">
-
-                    </Grid>
                   </Grid>
-                  {/* <Grid item xs={12} md={4} >
+                  <Grid item xs={12} container alignItems="center" justifyContent="center" align-content="center">
+                    <FormControlLabel
+                      control={<IOSSwitch checked={selectedItem.surucu || false} onChange={(e) => handleUserDataChange('surucu', e.target.checked)} />}
+
+                    />
+                  </Grid>
+                  <Grid item xs={12}  container alignItems="center" justifyContent="center" align-content="center">
+                    Sürücü Olarak Onayla.
+
+                  </Grid>
+                  <Grid item xs={12}  container alignItems="center" justifyContent="center" align-content="center">
+
+                  </Grid>
+                  <Grid item xs={12}  >
                     <RedditTextField
 
 
@@ -432,9 +458,9 @@ function PersonelPopup({ open, onClose }) {
                       value={selectedItem.email}
                       disabled
                     />
-                  </Grid> */}
+                  </Grid>
 
-                  <Grid item xs={12} md={6} >
+                  <Grid item xs={12}  >
                     <TextField
                       margin="dense"
                       label="Adı Soyadı"
@@ -447,7 +473,7 @@ function PersonelPopup({ open, onClose }) {
                     />
                   </Grid>
 
-                  <Grid item xs={12} md={6} >
+                  <Grid item xs={12}  >
                     <TextField
                       margin="dense"
                       label="Ehliyet Yenileme Tarihi"
@@ -459,9 +485,8 @@ function PersonelPopup({ open, onClose }) {
                       error={tarihError}
                       helperText={tarihError ? 'Geçersiz tarih' : ''}
                     />
-
                   </Grid>
-                  <Grid item xs={12} md={6} >
+                  <Grid item xs={12} >
                     <TextField
                       margin="dense"
                       label="Ehliyet Türü"
@@ -475,7 +500,7 @@ function PersonelPopup({ open, onClose }) {
                   </Grid>
 
 
-                  <Grid item xs={12} md={6} >
+                  <Grid item xs={12}  >
                     <TextField
                       margin="dense"
                       label="Telefon"
@@ -487,7 +512,7 @@ function PersonelPopup({ open, onClose }) {
                       helperText={telError ? 'Geçersiz telefon numarası' : ''}
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}  >
+                  <Grid item xs={12}   >
                     <TextField
                       margin="dense"
                       label="Departman"
@@ -501,7 +526,7 @@ function PersonelPopup({ open, onClose }) {
                   </Grid>
 
 
-                  <Grid item xs={12} md={12} >
+                  <Grid item xs={12}  >
                     <TextField
                       margin="dense"
                       size="small"
@@ -515,7 +540,7 @@ function PersonelPopup({ open, onClose }) {
                   </Grid>
 
 
-                  <Grid item xs={12} md={12} >
+                  <Grid item xs={12}  >
                     <TextField
                       margin="dense"
                       label="Açıklama"
@@ -530,7 +555,7 @@ function PersonelPopup({ open, onClose }) {
                 </Grid>
               </Grid>
 
-              <Grid item xs={4} >
+              <Grid item xs={gelenIdDeger === false ? (4) : (6)} >
                 <Grid container spacing={0}>
 
                   <Grid item xs={12} md={12} >

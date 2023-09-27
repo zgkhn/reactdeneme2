@@ -4,7 +4,8 @@ import { useCollection } from '../../hooks/useallCollection'
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import { useAuthContext } from '../../hooks/useAuthContext'
-
+import moment from "moment";
+import 'moment/locale/tr'
 const Form = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -15,53 +16,102 @@ const Form = () => {
 
 
 
-const filteredDocuments = documents.filter(doc => {
-  return doc.firmakod === user.displayName && doc.surucu === true;
-});console.log(documents)
-  const columns = [
-    {
-      Header: '',
-      accessor: 'avatar', // Gerçek veriye göre bu kısmı güncelleyin
-      avatar:true,
+  const filteredDocuments = documents
+  .filter(doc => doc.firmakod === user.displayName && doc.surucu === true)
+  .map(doc => {
+    // doc.eyt (Timestamp) değerini moment.js ile belirli bir tarih formatında biçimlendirin
+    const formattedEyt = moment(doc.eyt.toDate()).format('DD-MM-YYYY'); // Varsayılan format YYYY-MM-DD'dir, istediğiniz formatı değiştirebilirsiniz.
 
-     },{
-      Header: 'Adı Soyadı',
+    // doc nesnesini klonlayın ve 'eyt' alanını biçimlendirilmiş değerle güncelleyin
+    return {
+      ...doc,
+      eyt: formattedEyt,
+    };
+  });
+
+  
+
+
+
+console.log("fff",filteredDocuments)
+const columns = [
+  {
+    Header: '',
+      accessor: 'photoURL', // Gerçek veriye göre bu kısmı güncelleyin
+      avatar:true,
+      sm: 0.5, // İlgili sütunun genişliği
+      align: 'center',
+   },{
+
+     Header: 'Adı Soyadı',
       accessor: 'ad', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-     ara:true
-    },
-    {
-      Header: 'Email',
-      accessor: 'email', // Gerçek veriye göre bu kısmı güncelleyin
-      siralama:false ,
-      ara:true
+     ara:true,
+     sm: 2 ,// İlgili sütunun genişliği
+     siralama :true
 
+  },
+  {
+    Header: 'Email',
+    accessor: 'email', // Gerçek veriye göre bu kısmı güncelleyin
+    sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+    ara:true,
+    sm: 2 ,// İlgili sütunun genişliği
+    siralama :true
 
-    },
-    {
-      Header: 'Ehliyet Yenileme Tarihi',
-      accessor: 'eyt', // Gerçek veriye göre bu kısmı güncelleyin
+  },{
+    Header: 'Telefon',
+      accessor: 'tel', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+      ara:true,
+      sm: 2 ,// İlgili sütunun genişliği
+      siralama :true
 
-    },
-    {
-      Header: 'Belge Türü',
-      accessor: 'ehliyet', // Gerçek veriye göre bu kısmı güncelleyin
+  },
+  {
+ 
+    Header: 'Ehliyet Yenileme Tarihi',
+    accessor: 'eyt', // Gerçek veriye göre bu kısmı güncelleyin
+    sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+    ara:true,
+    eyt:true,
+    sm: 2, // İlgili sütunun genişliği
+    siralama :true
+
+  },
+  {
+    Header: 'Belge Türü',
+    accessor: 'ebilgi', // Gerçek veriye göre bu kısmı güncelleyin
+    sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+    ara:true,
+    sm: 2, // İlgili sütunun genişliği
+    siralama :true
+  },
+  {
+    Header: 'Departman',
+      accessor: 'departman', // Gerçek veriye göre bu kısmı güncelleyin
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+      ara:true,
+      sm: 2, // İlgili sütunun genişliği
+      siralama :true
 
-    },{
-      Header: 'Email',
-      accessor: 'emadil', // Gerçek veriye göre bu kısmı güncelleyin
-      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-
-    },
-    {
-      Header: 'Telefon',
-      accessor: 'tel412', // Gerçek veriye göre bu kısmı güncelleyin
-      sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
-
-    },
-  ];
+  },
+  {
+    Header: 'Açıklama',
+    accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
+    sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+    ara:true,
+    sm: 6 ,// İlgili sütunun genişliği
+    bilgi:true
+  },
+  {
+    Header: 'Yetkiler',
+    accessor: 'Yetki', // Gerçek veriye göre bu kısmı güncelleyin
+    sm: 0.5, // İlgili sütunun genişliği
+    align: 'center',
+    ayar:true
+   }
+];
 
 
   return (
