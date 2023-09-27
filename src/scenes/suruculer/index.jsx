@@ -41,6 +41,8 @@ const columns = [
       avatar:true,
       sm: 0.5, // İlgili sütunun genişliği
       align: 'center',
+      pdf :false
+
    },{
 
      Header: 'Adı Soyadı',
@@ -48,7 +50,7 @@ const columns = [
       sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
      ara:true,
      sm: 2 ,// İlgili sütunun genişliği
-     siralama :true
+     siralama :true,
 
   },
   {
@@ -105,11 +107,13 @@ const columns = [
     bilgi:true
   },
   {
-    Header: 'Yetkiler',
+    Header: '',
     accessor: 'Yetki', // Gerçek veriye göre bu kısmı güncelleyin
     sm: 0.5, // İlgili sütunun genişliği
     align: 'center',
-    ayar:true
+    ayar:true,
+    pdf :false
+
    }
 ];
 

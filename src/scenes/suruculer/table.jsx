@@ -118,21 +118,36 @@ function Tablee({ data, columns }) {
     const doc = new jsPDF({
       orientation: 'landscape', // Sayfayı yan çevir
     });
-
+  
     doc.autoTable({
       html: '#table',
       margin: { top: 10 }, // Tabloyu sayfanın üst kısmına yakın bir konumda başlat
       tableWidth: 'auto', // Tabloyu sayfaya otomatik olarak sığdır
       theme: 'grid', // İstediğiniz tema seçeneğini kullanabilirsiniz
     });
-
-    doc.save('tablo-verileri.pdf');
+  
+    const table = doc.lastAutoTable;
+  
+    // Iterate through columns and skip those with pdf: false
+    for (let i = 0; i < table.columns.length; i++) {
+      if (columns[i].pdf === false) {
+        table.columns[i].minWidth = 0;
+        table.columns[i].width = 0;
+      }
+    }
+  
+    doc.save('Sürücü-Listesi.pdf');
   };
+  
+  
+  
+  
+  
 
   const dialogElement = document.querySelector('.custom-popup');
 
   if (dialogElement) {
-    dialogElement.style.width = '800xp'; /* Sayfayı yatayda %80 doldurmak için */
+    dialogElement.style.width = '80xp'; /* Sayfayı yatayda %80 doldurmak için */
 
   }
   // Hata durumunu ele al

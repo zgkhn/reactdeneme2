@@ -388,8 +388,10 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     <Dialog
       fullWidth={fullWidth}
       maxWidth={maxWidth}
+      maxHeight="50vh"
       open={open}
       onClose={handleClose}
+      
     >
 
 
@@ -402,28 +404,21 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
         </DialogContentText>
         <Grid container spacing={2}>
           {!gelenIdDeger === false ? ("") : (<>
-            <Grid item xs={selectedItemId ? (3) : (12)}>
-              <div style={{
-                width: '100%',
-                height: '100%',
-                bgcolor: colors.primary[400],
-                position: 'relative',
-                overflow: 'auto',
-                maxHeight: '100%'
-              }}>
-
-                <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400], }}>
-
-
-
-                  {filteredListItems}
-
-
-
-                </List>
-              </div>
-
-            </Grid></>)}
+            <Grid item xs={selectedItemId ? 3 : 12}>
+  <div style={{
+    width: '100%',
+    height: '100%',
+    bgcolor: colors.primary[400],
+    position: 'relative',
+    overflow: 'auto',
+    maxHeight: '100%' // Dış Grid öğesinin yüksekliğine eşit
+  }}>
+    <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400] }}>
+      {filteredListItems}
+    </List>
+  </div>
+</Grid>
+</>)}
           {selectedItemId ? (
             <>
 
