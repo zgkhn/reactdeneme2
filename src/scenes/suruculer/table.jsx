@@ -113,41 +113,54 @@ function Tablee({ data, columns }) {
     a.click();
   };
 
-
+  function replaceTurkishCharacters(text) {
+    const replacements = {
+      'ş': '\u015F', // Ş
+      'Ş': '\u015E', // ş
+      'ı': '\u0131', // ı
+      'İ': '\u0130', // İ
+      'ğ': '\u011F', // ğ
+      'Ğ': '\u011E', // Ğ
+      'ü': '\u00FC', // ü
+      'Ü': '\u00DC', // Ü
+      'ö': '\u00F6', // ö
+      'Ö': '\u00D6', // Ö
+      'ç': '\u00E7', // ç
+      'Ç': '\u00C7', // Ç
+    };
+  
+    return text.replace(/[şŞıİğĞüÜöÖçÇ]/g, (match) => replacements[match]);
+  }
   const exportToPDF = () => {
     const doc = new jsPDF({
       orientation: 'landscape', // Sayfayı yan çevir
     });
   
+    const table = document.getElementById('table');
+    
+    // Türkçe karakterleri düzelt
+    const correctedTable = table.cloneNode(true);
+    correctedTable.querySelectorAll('td').forEach((cell) => {
+      if (cell.textContent) {
+        cell.textContent = replaceTurkishCharacters(cell.textContent);
+      }
+    });
+  
     doc.autoTable({
-      html: '#table',
+      html: correctedTable,
       margin: { top: 10 }, // Tabloyu sayfanın üst kısmına yakın bir konumda başlat
       tableWidth: 'auto', // Tabloyu sayfaya otomatik olarak sığdır
       theme: 'grid', // İstediğiniz tema seçeneğini kullanabilirsiniz
     });
   
-    const table = doc.lastAutoTable;
-  
-    // Iterate through columns and skip those with pdf: false
-    for (let i = 0; i < table.columns.length; i++) {
-      if (columns[i].pdf === false) {
-        table.columns[i].minWidth = 0;
-        table.columns[i].width = 0;
-      }
-    }
-  
-    doc.save('Sürücü-Listesi.pdf');
+    doc.save('tablo-verileri.pdf');
   };
-  
-  
-  
-  
   
 
   const dialogElement = document.querySelector('.custom-popup');
 
   if (dialogElement) {
-    dialogElement.style.width = '80xp'; /* Sayfayı yatayda %80 doldurmak için */
+    dialogElement.style.width = '800xp'; /* Sayfayı yatayda %80 doldurmak için */
 
   }
   // Hata durumunu ele al
@@ -282,40 +295,32 @@ function Tablee({ data, columns }) {
                               </TableCell>
                             );
                           } else if (cell.column.eyt) {
-                            // Örnek tarih değeri ve bugünkü tarih
-                            const gelenTarih = new Date(cell.render('Cell'));
+
+
+                            const gelenTarih = moment(cell.value, "DD-MM-YYYY");                            
                             const bugun = new Date();
                           
-                            // Tarihleri belirli bir formatla alın
-                            const gelenTarihStr = gelenTarih.toLocaleDateString();
-                            const bugunStr = bugun.toLocaleDateString();
-                          
-                            let cellIcerik = cell.render('Cell');
-                            console.log("tarih1", cell.render('Cell').value);
-                            console.log("tarih2", bugunStr); // Bu bugün tarihinin string formatını gösterir
+                            // Tarihleri belirli bir formatla al
+                        
                           
                             // Gün farkını hesapla
                             const gunFarki = Math.floor((gelenTarih - bugun) / (1000 * 60 * 60 * 24));
                           
-                            // Hücreyi oluştur
-                          
-                            // Gün farkına göre metin rengini ayarla
+                            // Gün farkına göre metin rengini ve metni ayarla
+                            let cellIcerik = null;
                             if (gunFarki < 30) {
                               cellIcerik = (
                                 <span style={{ color: 'red' }}>
-                                  {cellIcerik} 
-                                  {/* ({gunFarki} gün kaldı) */}
+                                  {cell.value} ( {gunFarki} gün kaldı )
                                 </span>
                               );
                             } else {
                               cellIcerik = (
                                 <span>
-                                  {cellIcerik}
-                                   {/* ({gunFarki} gün kaldı) */}
+                                  {cell.value}  ( {gunFarki} gün kaldı )
                                 </span>
                               );
                             }
-                          
                             return (
                               <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
                                 {cellIcerik}

@@ -2,4 +2,7 @@
   max-width: 150%;
 
   }
-  
+  .font-face {
+    font-family: 'ArialUnicodeMS';
+    src: url('../../data/font/ArialUnicodeMS.ttf') format('truetype');
+  }
