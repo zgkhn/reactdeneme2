@@ -11,7 +11,6 @@ import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dashboard";
 import Contacts from "./scenes/contacts";
 import Suruculer from "./scenes/suruculer";
-import Form from "./scenes/suruculer1";
 import Calendar from "./scenes/calendar";
 import FAQ from "./scenes/faq";
 import Bar from "./scenes/bar";
@@ -83,7 +82,6 @@ function App() {
 
                     
                     <Route path="/Suruculer" element={<Suruculer />} />
-                    <Route path="/form" element={<Form />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/bar" element={<Bar />} />
