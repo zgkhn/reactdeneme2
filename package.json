@@ -44,6 +44,7 @@
     "react-data-export": "^0.6.0",
     "react-datatable": "^0.0.31",
     "react-dom": "18.2.0",
+    "react-dropzone-uploader": "^2.11.0",
     "react-export-excel": "^0.5.3",
     "react-fullcalendar": "^1.0.0",
     "react-icons": "^4.10.1",

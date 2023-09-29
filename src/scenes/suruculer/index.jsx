@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Tablee from './table';
+import Deneme from './deneme';
+
 import { useCollection } from '../../hooks/useallCollection'
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";

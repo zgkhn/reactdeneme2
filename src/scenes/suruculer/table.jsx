@@ -306,7 +306,7 @@ function Tablee({ data, columns }) {
                               <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
                                 <div style={{ display: 'flex', flexDirection: 'row' }}>
 
-                                  <IconButton onClick={() => personelAdd(row.original.id)}>
+                                  <IconButton onClick={() => personelEdit(row.original.id)}>
                                     <FolderCopyIcon />
                                   </IconButton>
 
