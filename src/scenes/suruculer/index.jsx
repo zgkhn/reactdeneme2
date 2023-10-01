@@ -79,7 +79,7 @@ const columns = [
     sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
     ara:true,
     eyt:true,
-    sm: 2, // İlgili sütunun genişliği
+    sm: 4, // İlgili sütunun genişliği
     siralama :true
 
   },
@@ -88,7 +88,7 @@ const columns = [
     accessor: 'ebilgi', // Gerçek veriye göre bu kısmı güncelleyin
     sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
     ara:true,
-    sm: 2, // İlgili sütunun genişliği
+    sm: 4, // İlgili sütunun genişliği
     siralama :true
   },
   {
@@ -105,7 +105,7 @@ const columns = [
     accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
     sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
     ara:true,
-    sm: 6 ,// İlgili sütunun genişliği
+    sm: 4 ,// İlgili sütunun genişliği
     bilgi:true
   },
   {

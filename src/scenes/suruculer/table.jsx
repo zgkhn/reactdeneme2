@@ -27,6 +27,7 @@ import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 import HttpsIcon from '@mui/icons-material/Https';
 import IconButton from '@mui/material/IconButton';
 import SettingsSuggestIcon from '@mui/icons-material/SettingsSuggest';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 function Tablee({ data, columns }) {
   const [openDialog, setOpenDialog] = useState(false);
@@ -256,23 +257,29 @@ function Tablee({ data, columns }) {
                   {headerGroups.map((headerGroup) => (
 
                     <TableRow {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column) => (
+                     
+                      {headerGroup.headers.map((column) => ( 
                         <TableCell {...column.getHeaderProps(column.siralama ? column.getSortByToggleProps() : {})}>
-                          <span style={{ fontSize: '14px' }}>{column.render('Header')}</span>
-                          {column.siralama && ( // Sadece sıralama etkinse iconları göster
-                            column.isSorted ? (
-                              column.isSortedDesc ? (
-                                <KeyboardArrowUpIcon fontSize="small" />
-                              ) : (
-                                <KeyboardArrowDownIcon fontSize="small" />
-                              )
-                            ) : (
-                              <>
-                                <KeyboardArrowUpIcon fontSize="small" />
-                                <KeyboardArrowDownIcon fontSize="small" />
-                              </>
-                            )
-                          )}
+                          <span style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                          {column.render('Header')}
+  {column.siralama && ( // Sadece sıralama etkinse iconları göster
+    <>
+      {column.isSorted ? (
+        column.isSortedDesc ? (
+          <KeyboardArrowUpIcon fontSize="small" />
+        ) : (
+          <KeyboardArrowDownIcon fontSize="small" />
+        )
+      ) : (
+        <>
+          <UnfoldMoreIcon fontSize="small" />
+        </>
+      )}
+    </>
+  )}
+ 
+</span>
+
                         </TableCell>
                       ))}
                     </TableRow>

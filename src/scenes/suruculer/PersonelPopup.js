@@ -189,6 +189,16 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     setVeriDeger(false);
     gelenIdDeger = false
 
+    setEhliyetError("");
+    setFormattedDate("");
+    setAdError("");
+    setTarihError("");
+    setTelError("");
+    setDepartmanError("");
+
+
+
+
   };
   const handleUserDataChange = (field, value) => {
     if (field === 'eyt') {
@@ -341,7 +351,12 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     setProfilePhotoOn("");
     setOnChangeVeri("")
 
-
+    setEhliyetError("");
+    setFormattedDate("");
+    setAdError("");
+    setTarihError("");
+    setTelError("");
+    setDepartmanError("");
 
 
 
@@ -399,7 +414,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
         <DialogContentText>
           <ResimEdit open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={handleResimEditKaydet} />
           {gelenIdDeger === false ? (" Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.") : ("")}
-         
+         <p></p>
         </DialogContentText>
         <Grid container spacing={2}>
           {!gelenIdDeger === false ? ("") : (<>
@@ -410,7 +425,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     bgcolor: colors.primary[400],
     position: 'relative',
     overflow: 'auto',
-    maxHeight: '100%' // Dış Grid öğesinin yüksekliğine eşit
+    maxHeight: '73vh' // Dış Grid öğesinin yüksekliğine eşit
   }}>
     <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400] }}>
       {filteredListItems}
