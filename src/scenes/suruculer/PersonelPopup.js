@@ -28,6 +28,7 @@ import ReactCropper from 'react-cropper';
 import 'cropperjs/dist/cropper.css';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 //https://github.com/junkboy0315/react-compare-image/blob/master/README.md
 function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
@@ -63,7 +64,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
   const { isPending, error, documents } = useCollection('user');
   const [resimEditOpen, setResimEditOpen] = useState(false);
   const [formattedDate, setFormattedDate] = useState('');
-  const [departmanError, setDepartmanError] = useState('');
+  const [departmanError, setDepartmanError] = useState(false);
   const currentDate = new Date();
   const [selectedItemId, setSelectedItemId] = useState('');
   const [selectedItem, setSelectedItem] = useState('');
@@ -79,7 +80,26 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
   const [tarihError, setTarihError] = useState(false);
   const [veriDeger, setVeriDeger] = useState("");
   const [newUserData, setNewUserData] = useState();
+  useEffect(() => {
 
+    if (selectedItem.eyt) {
+
+      if (selectedItem.eyt instanceof firebaseTimestamp) {
+        // Firebase Timestamp'i milisaniye cinsinden zaman damgasına dönüştür
+        const timestampMillis = selectedItem.eyt.toMillis();
+        // Zaman damgasını kullanarak JavaScript tarih nesnesi oluştur
+        const jsDate = new Date(timestampMillis);
+        // JavaScript tari nesnesini istediğiniz formatta formatla
+        const formattedDate = moment(jsDate).format('YYYY-MM-DD');
+
+        // Formatlanmış tarihi state'e kaydet
+        setFormattedDate(formattedDate);
+      } else {
+
+        setFormattedDate("");
+      }
+    }
+  }, [selectedItem]);
   const IOSSwitch = styled((props) => (
     <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
   ))(({ theme }) => ({
@@ -189,12 +209,12 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     setVeriDeger(false);
     gelenIdDeger = false
 
-    setEhliyetError("");
+    setEhliyetError(false);
     setFormattedDate("");
-    setAdError("");
-    setTarihError("");
-    setTelError("");
-    setDepartmanError("");
+    setAdError(false);
+    setTarihError(false);
+    setTelError(false);
+    setDepartmanError(false);
 
 
 
@@ -243,26 +263,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
   const oneDayAgo = new Date(currentDate);
   oneDayAgo.setDate(currentDate.getDate() - 1);
 
-  useEffect(() => {
-
-    if (selectedItem.eyt) {
-
-      if (selectedItem.eyt instanceof firebaseTimestamp) {
-        // Firebase Timestamp'i milisaniye cinsinden zaman damgasına dönüştür
-        const timestampMillis = selectedItem.eyt.toMillis();
-        // Zaman damgasını kullanarak JavaScript tarih nesnesi oluştur
-        const jsDate = new Date(timestampMillis);
-        // JavaScript tari nesnesini istediğiniz formatta formatla
-        const formattedDate = moment(jsDate).format('YYYY-MM-DD');
-
-        // Formatlanmış tarihi state'e kaydet
-        setFormattedDate(formattedDate);
-      } else {
-
-        setFormattedDate("");
-      }
-    }
-  }, [selectedItem]);
+  
 
 
   // Filtreleme işlemi
@@ -316,11 +317,17 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
       const selectedItem = filteredDocuments.find((item) => item.id === gelenIdDeger);
 
       setSelectedItem(selectedItem)
+     
     } else {
 
       setSelectedItem("")
       setSelectedItemId("")
     }
+
+
+
+
+    
   }, [open]);
 
 
@@ -352,7 +359,6 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     setOnChangeVeri("")
 
     setEhliyetError("");
-    setFormattedDate("");
     setAdError("");
     setTarihError("");
     setTelError("");
@@ -402,10 +408,9 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
     <Dialog
       fullWidth={fullWidth}
       maxWidth={maxWidth}
-      maxHeight="50vh"
       open={open}
       onClose={handleClose}
-      
+
     >
 
 
@@ -414,49 +419,34 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
         <DialogContentText>
           <ResimEdit open={resimEditOpen} onClose={() => setResimEditOpen(false)} veri={onChangeVeri} konum={resimEditKonum} onChange={handleResimEditKaydet} />
           {gelenIdDeger === false ? (" Yeni bir Sürücü eklemek için aşağıdaki bilgileri doldurun.") : ("")}
-         <p></p>
         </DialogContentText>
         <Grid container spacing={2}>
           {!gelenIdDeger === false ? ("") : (<>
             <Grid item xs={selectedItemId ? 3 : 12}>
-  <div style={{
-    width: '100%',
-    height: '100%',
-    bgcolor: colors.primary[400],
-    position: 'relative',
-    overflow: 'auto',
-    maxHeight: '73vh' // Dış Grid öğesinin yüksekliğine eşit
-  }}>
-    <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400] }}>
-      {filteredListItems}
-    </List>
-  </div>
-</Grid>
-</>)}
+              <div style={{
+                width: '100%',
+                height: '100%',
+                bgcolor: colors.primary[400],
+                position: 'relative',
+                overflow: 'auto',
+                maxHeight: '33vh'
+              }}>
+                <List sx={{ width: '100%', height: '100%', bgcolor: colors.primary[400] }}>
+                  {filteredListItems}
+                </List>
+              </div>
+            </Grid>
+          </>)}
           {selectedItemId ? (
             <>
 
               <Grid item xs={gelenIdDeger === false ? (5) : (6)} >
                 <Grid container spacing={1}>
 
-                  <Grid item xs={12}  container alignItems="center" justifyContent="center" align-content="center">
 
-                  </Grid>
-                  <Grid item xs={12} container alignItems="center" justifyContent="center" align-content="center">
-                    <FormControlLabel
-                      control={<IOSSwitch checked={selectedItem.surucu || false} onChange={(e) => handleUserDataChange('surucu', e.target.checked)} />}
-
-                    />
-                  </Grid>
-                  <Grid item xs={12}  container alignItems="center" justifyContent="center" align-content="center">
-                    Sürücü Olarak Onayla.
-
-                  </Grid>
-                  <Grid item xs={12}  container alignItems="center" justifyContent="center" align-content="center">
-
-                  </Grid>
-                  <Grid item xs={12}  >
+                  <Grid item xs={6}  >
                     <RedditTextField
+                      size="small"
 
 
                       autoFocus
@@ -469,12 +459,13 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                     />
                   </Grid>
 
-                  <Grid item xs={12}  >
+                  <Grid item xs={6}  >
                     <TextField
                       margin="dense"
                       label="Adı Soyadı"
                       fullWidth
                       value={selectedItem.ad ? (selectedItem.ad) : ("")}
+                      size="small"
 
                       onChange={(e) => handleUserDataChange('ad', e.target.value)}
                       error={adError}
@@ -482,7 +473,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                     />
                   </Grid>
 
-                  <Grid item xs={12}  >
+                  <Grid item xs={6}  >
                     <TextField
                       margin="dense"
                       label="Ehliyet Yenileme Tarihi"
@@ -495,7 +486,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                       helperText={tarihError ? 'Geçersiz tarih' : ''}
                     />
                   </Grid>
-                  <Grid item xs={12} >
+                  <Grid item xs={6} >
                     <TextField
                       margin="dense"
                       label="Ehliyet Türü"
@@ -509,7 +500,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                   </Grid>
 
 
-                  <Grid item xs={12}  >
+                  <Grid item xs={6}  >
                     <TextField
                       margin="dense"
                       label="Telefon"
@@ -521,7 +512,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                       helperText={telError ? 'Geçersiz telefon numarası' : ''}
                     />
                   </Grid>
-                  <Grid item xs={12}   >
+                  <Grid item xs={6}   >
                     <TextField
                       margin="dense"
                       label="Departman"
@@ -543,7 +534,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                       fullWidth
                       value={selectedItem.adres ? (selectedItem.adres) : ("")}
                       multiline
-                      rows={1}
+                      rows={3}
                       onChange={(e) => handleUserDataChange('adres', e.target.value)}
                     />
                   </Grid>
@@ -557,7 +548,7 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                       fullWidth
                       multiline
                       value={selectedItem.bilgi ? (selectedItem.bilgi) : ("")}
-                      rows={2}
+                      rows={3}
                       onChange={(e) => handleUserDataChange('bilgi', e.target.value)}
                     />
                   </Grid>
@@ -571,7 +562,6 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
 
                     <Grid container spacing={5}>
                       <Grid item xs={12} md={12} >
-
                         <ReactCompareImage
                           leftImage={profilePhotoOnUrl ? (
                             profilePhotoOnUrl) : selectedItem.ehliyetOnFoto ? (
@@ -629,17 +619,30 @@ function PersonelPopup({ open, onClose, gelenIdDeger, onChange }) {
                 </Grid>
               </Grid>
             </>) : (
-            ""
+           null
           )}
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
-          İptal</Button>
+        {selectedItemId ? (
+          
+        <>    Sürücü Olarak Onayla.
 
-        <Button onClick={handleSubmit} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
-          Kaydet
-        </Button>
+        <FormControlLabel
+            control={
+              <IOSSwitch
+                checked={selectedItem.surucu || false}
+                onChange={(e) => handleUserDataChange('surucu', e.target.checked)}
+              />
+            }
+          />
+          <Button onClick={handleClose} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
+            İptal</Button>
+
+          <Button onClick={handleSubmit} style={{ margin: '0 5px', backgroundColor: colors.primary[400], color: colors.primary[100] }} variant="outlined" component="span">
+            Kaydet
+          </Button>
+      </> ) : null}
       </DialogActions>
     </Dialog>
 

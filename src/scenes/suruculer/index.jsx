@@ -105,9 +105,19 @@ const columns = [
     accessor: 'bilgi', // Gerçek veriye göre bu kısmı güncelleyin
     sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
     ara:true,
-    sm: 4 ,// İlgili sütunun genişliği
-    bilgi:true
+    sm: 2 ,// İlgili sütunun genişliği
+    bilgi:true,
+    popover:true
   },
+  // {
+  //   Header: 'Adres ',
+  //   accessor: 'adres', // Gerçek veriye göre bu kısmı güncelleyin
+  //   sortType: 'alphanumeric', // Sıralama türü belirtin (isteğe bağlı)
+  //   ara:true,
+  //   sm: 2 ,// İlgili sütunun genişliği
+  //   bilgi:true,
+  //   popover:true
+  // },
   {
     Header: '',
     accessor: 'Yetki', // Gerçek veriye göre bu kısmı güncelleyin

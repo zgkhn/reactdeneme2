@@ -23,6 +23,7 @@ import moment from "moment";
 import 'moment/locale/tr'
 import { useDocument, useAllVeri } from '../../hooks/useCollection'
 import FolderCopyIcon from '@mui/icons-material/FolderCopy';
+import { Tooltip } from 'react-tooltip';
 
 import HttpsIcon from '@mui/icons-material/Https';
 import IconButton from '@mui/material/IconButton';
@@ -36,6 +37,7 @@ function Tablee({ data, columns }) {
   const [openDialogEdit, setOpenDialogEdit] = useState(false);
 
   const [veri, setVeri] = useState("");
+  const [veri1, setVeri1] = useState("");
 
   const personelAdd = (veri) => {
 
@@ -47,7 +49,7 @@ function Tablee({ data, columns }) {
   const personelEdit = (veri) => {
 
     setOpenDialogEdit(true);
-    setVeri(veri)
+    setVeri1(veri)
 
 
   };
@@ -170,10 +172,10 @@ function Tablee({ data, columns }) {
   const dialogElement = document.querySelector('.custom-popup');
 
   if (dialogElement) {
-    dialogElement.style.width = '800xp'; /* Sayfayı yatayda %80 doldurmak için */
+    dialogElement.style.width = '800xp';
+    //Sayfayı yatayda %80 doldurmak için 
 
   }
-  // Hata durumunu ele al
   if (error) {
     return <p>Hata oluştu: {error.message}</p>;
   }
@@ -185,7 +187,7 @@ function Tablee({ data, columns }) {
 
         <div>
           <PersonelPopup open={openDialog} onClose={() => { setOpenDialog(false); }} gelenIdDeger={veri} />
-          <PersonelDosya open={openDialogEdit} onClose={() => { setOpenDialogEdit(false); }} gelenIdDeger={veri} />
+          <PersonelDosya open={openDialogEdit} onClose={() => { setOpenDialogEdit(false); }} gelenIdDeger={veri1} />
 
           <div align="center">
 
@@ -228,16 +230,17 @@ function Tablee({ data, columns }) {
                       />
                     </TableCell>
 
-                    <TableCell style={{ textAlign: 'right' }}> {/* Düğmeleri sağa yaslar */}
+                    <TableCell style={{ textAlign: 'right' }}>
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        {yetki.master === true || yetki.SuruculerYazma === true ? (
+                          <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => personelAdd(false)} startIcon={<PersonAddAlt1Icon />}></Button>
+                        ) : (null)}
 
-
-                      {yetki.master === true || yetki.SuruculerYazma === true ? (
-                        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => personelAdd(false)} startIcon={<PersonAddAlt1Icon />}></Button>
-                      ) : (null)}
-
-                      <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={exportToExcel} startIcon={<PostAddIcon />}></Button>
-                      <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={exportToPDF} startIcon={<PictureAsPdfIcon />}></Button>
+                        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={exportToExcel} startIcon={<PostAddIcon />}></Button>
+                        <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={exportToPDF} startIcon={<PictureAsPdfIcon />}></Button>
+                      </div>
                     </TableCell>
+
                   </TableRow>
                 </TableBody>
               </Table>
@@ -257,28 +260,28 @@ function Tablee({ data, columns }) {
                   {headerGroups.map((headerGroup) => (
 
                     <TableRow {...headerGroup.getHeaderGroupProps()}>
-                     
-                      {headerGroup.headers.map((column) => ( 
+
+                      {headerGroup.headers.map((column) => (
                         <TableCell {...column.getHeaderProps(column.siralama ? column.getSortByToggleProps() : {})}>
                           <span style={{ fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                          {column.render('Header')}
-  {column.siralama && ( // Sadece sıralama etkinse iconları göster
-    <>
-      {column.isSorted ? (
-        column.isSortedDesc ? (
-          <KeyboardArrowUpIcon fontSize="small" />
-        ) : (
-          <KeyboardArrowDownIcon fontSize="small" />
-        )
-      ) : (
-        <>
-          <UnfoldMoreIcon fontSize="small" />
-        </>
-      )}
-    </>
-  )}
- 
-</span>
+                            {column.render('Header')}
+                            {column.siralama && ( // Sadece sıralama etkinse iconları göster
+                              <>
+                                {column.isSorted ? (
+                                  column.isSortedDesc ? (
+                                    <KeyboardArrowUpIcon fontSize="small" />
+                                  ) : (
+                                    <KeyboardArrowDownIcon fontSize="small" />
+                                  )
+                                ) : (
+                                  <>
+                                    <UnfoldMoreIcon fontSize="small" />
+                                  </>
+                                )}
+                              </>
+                            )}
+
+                          </span>
 
                         </TableCell>
                       ))}
@@ -291,80 +294,97 @@ function Tablee({ data, columns }) {
                   {page.map((row) => {
                     prepareRow(row);
                     return (
-<TableRow
-        {...row.getRowProps()}
-        onMouseEnter={() => {
-          // Fare satırın üzerine geldiğinde rengi değiştir
-          row.getRowProps().style = { backgroundColor: colors.primary[100] };
-        }}
-        onMouseLeave={() => {
-          // Fare satırın üzerinden çıktığında rengi eski haline getir
-          row.getRowProps().style = {backgroundColor: colors.primary[400]};
-        }}
-      >                        {row.cells.map((cell, cellIndex) => {
-                          if (cell.column.avatar) {
-                            return (
-                              <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
-                                <Avatar src={cell.value} sx={{ width: 27, height: 27 }} />
-                              </TableCell>
-                            );
-                          } else if (cell.column.ayar) {
-                            return (
-                              <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
-                                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <TableRow
+                        {...row.getRowProps()}
+                        onMouseEnter={() => {
+                          row.getRowProps().style = { backgroundColor: colors.primary[100] };
+                        }}
+                        onMouseLeave={() => {
+                          row.getRowProps().style = { backgroundColor: colors.primary[400] };
+                        }}
+                      >
+                        {row.cells.map((cell, cellIndex) => {
+                        if (cell.column.avatar) {
+                          return (
+                            <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
+                              <Avatar src={cell.value} sx={{ width: 27, height: 27 }} />
+                            </TableCell>
+                          );
+                        } else if (cell.column.ayar) {
+                          return (
+                            <TableCell {...cell.getCellProps()} data-tooltip-id={cell.value} style={{ textAlign: cell.column.align || 'left' }}>
+                              <div style={{ display: 'flex', flexDirection: 'row' }}>
 
-                                  <IconButton onClick={() => personelEdit(row.original.id)}>
-                                    <FolderCopyIcon />
-                                  </IconButton>
+                                <IconButton onClick={() => personelEdit(row.original.id)}>
+                                  <FolderCopyIcon />
+                                </IconButton>
 
-                                  <IconButton onClick={() => personelAdd(row.original.id)}>
-                                    <SettingsSuggestIcon />
-                                  </IconButton>
-                                </div>
-                              </TableCell>
-                            );
-                          } else if (cell.column.eyt) {
+                                <IconButton onClick={() => personelAdd(row.original.id)}>
+                                  <SettingsSuggestIcon />
+                                </IconButton>
+                              </div>      <Tooltip
 
-
-                            const gelenTarih = moment(cell.value, "DD-MM-YYYY");
-                            const bugun = new Date();
-
-                            // Tarihleri belirli bir formatla al
+                                id={cell.value}
+                                content={cell.render('Cell')}
+                              />
+                            </TableCell>
+                          );
+                        } else if (cell.column.eyt) {
 
 
-                            // Gün farkını hesapla
-                            const gunFarki = Math.floor((gelenTarih - bugun) / (1000 * 60 * 60 * 24));
+                          const gelenTarih = moment(cell.value, "DD-MM-YYYY");
+                          const bugun = new Date();
 
-                            // Gün farkına göre metin rengini ve metni ayarla
-                            let cellIcerik = null;
-                            if (gunFarki < 30) {
-                              cellIcerik = (
-                                <span style={{ color: 'red' }}>
-                                  {cell.value} ( {gunFarki} gün kaldı )
-                                </span>
-                              );
-                            } else {
-                              cellIcerik = (
-                                <span>
-                                  {cell.value}  ( {gunFarki} gün kaldı )
-                                </span>
-                              );
-                            }
-                            return (
-                              <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
-                                {cellIcerik}
-                              </TableCell>
+                      
+                          const gunFarki = Math.floor((gelenTarih - bugun) / (1000 * 60 * 60 * 24));
+
+                          let cellIcerik = null;
+                          if (gunFarki < 30) {
+                            cellIcerik = (
+                              <span style={{ color: 'red' }}>
+                                {cell.value} ( {gunFarki} gün kaldı )
+                              </span>
                             );
                           } else {
-                            return (
-                              <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
-                                {cell.render('Cell')}
-                              </TableCell>
+                            cellIcerik = (
+                              <span>
+                                {cell.value}  ( {gunFarki} gün kaldı )
+                              </span>
                             );
                           }
+                          return (
+                            <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
+                              {cellIcerik}
+                            </TableCell>
+                          );
+                        } else if (cell.column.popover) {
+                          return (
+                            <TableCell {...cell.getCellProps()} data-tooltip-delay-show={500} data-tooltip-id={cell.row.id} style={{ textAlign: cell.column.align || 'left' }}>
+
+                              {cell.value ? <> {cell.value.length > 130 ? cell.value.substring(0, 130) + "..." : cell.render('Cell')}</> : cell.render('Cell')}
+                              <Tooltip
+                                id={cell.row.id}
+                                content={cell.render('Cell')}
+                                style={{
+                                  backgroundColor: colors.primary[450],
+                                  width: '400px',
+                                  fontSize: '14px'
+
+                                }}
+                              />
+                            </TableCell>
+                          );
+                        } else {
+
+                          return (
+                            <TableCell {...cell.getCellProps()} style={{ textAlign: cell.column.align || 'left' }}>
+                              {cell.render('Cell')}
+                            </TableCell>
+                          );
+                        }
 
 
-                        })}
+                      })}
                       </TableRow>
                     );
                   })}
@@ -395,8 +415,7 @@ function Tablee({ data, columns }) {
             <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(50)}>25</Button>
             <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(100)}>50</Button>
           </div>
-          <div >
-            <p>&nbsp;</p>    </div>
+       
         </div>
       );
     } else {

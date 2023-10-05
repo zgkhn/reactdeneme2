@@ -10,3 +10,82 @@
     background-color: lightgray;
     /* Diğer stil özelliklerini burada ekleyebilirsiniz */
   }
+
+
+  /*avatar*/
+  th:nth-child(1), td:nth-child(1) {
+    width: 2,5%;
+  }
+    /*adsoyad*/
+
+  th:nth-child(2), td:nth-child(2) {
+    width: 13%;
+  }
+    /*email*/
+
+  th:nth-child(3), td:nth-child(3) {
+    width: 15%;
+  }
+
+    /*tel*/
+
+  th:nth-child(4), td:nth-child(4) {
+    width: 5%;
+  }
+  
+
+  /*eyt*/
+
+  th:nth-child(5), td:nth-child(5) {
+    width: 12%;
+  }
+    /*belge*/
+
+  th:nth-child(6), td:nth-child(6) {
+    width: 10%;
+  }
+    /*departman*/
+
+  th:nth-child(7), td:nth-child(7) {
+    width: 10%;
+  }
+    /*acıklama*/
+
+  th:nth-child(8), td:nth-child(8) {
+    width: 30%;
+     
+
+  }  /*ayar*/
+  th:nth-child(9), td:nth-child(9) {
+    width: 2,5%;
+  }
+
+
+
+  .tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  
+  .tooltip {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    z-index: 1;
+  }
+  
+  .tooltip-container:hover .tooltip {
+    display: block;
+  }
