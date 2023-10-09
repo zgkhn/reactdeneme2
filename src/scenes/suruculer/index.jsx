@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Tablee from './table';
-import Deneme from './deneme';
 
 import { useCollection } from '../../hooks/useallCollection'
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
@@ -132,7 +131,8 @@ const columns = [
 
   return (
     <div>
-      <h1>Form</h1>
+      <br />
+      <br />
       <Box
     style={{
       padding: theme.palette.mode === "dark" ? "0 30px" : "0 30px"
@@ -149,6 +149,7 @@ const columns = [
           >
   
       <Tablee data={filteredDocuments} columns={columns} />
+      <br />
       </Box></Box>
     </div>
   );

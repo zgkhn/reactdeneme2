@@ -413,9 +413,11 @@ function Tablee({ data, columns }) {
 
             <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(25)}>10</Button>
             <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(50)}>25</Button>
-            <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(100)}>50</Button>
+           
+           <Button style={{ margin: '0 5px', backgroundColor: colors.primary[450] }} variant="contained" size="small" onClick={() => setPageSize(100)}>50</Button>
+         
           </div>
-       
+        
         </div>
       );
     } else {
